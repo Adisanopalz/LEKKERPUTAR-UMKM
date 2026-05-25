@@ -132,6 +132,7 @@
                 <div class="hidden md:flex space-x-8 items-center">
                     <a href="#beranda" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Beranda</a>
                     <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Menu Pilihan</a>
+                    <a href="#racik" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Racik Sendiri</a>
                     <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Info Order</a>
                     
                     <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-transform transform hover:scale-110 active:scale-95">
@@ -159,6 +160,7 @@
             <div class="px-4 pt-3 pb-5 space-y-2">
                 <a href="#beranda" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Beranda</a>
                 <a href="#menu" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Menu Pilihan</a>
+                <a href="#racik" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Racik Sendiri</a>
                 <a href="#tentang" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Info Order</a>
             </div>
         </div>
@@ -230,6 +232,63 @@
                 <!-- Grid Menu (Polaroid Style, responsive optimized) -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 px-2 sm:px-0" id="menu-container">
                     <!-- Menu items will be injected here by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Racik Sendiri Section -->
+        <section id="racik" class="py-16 md:py-24 bg-lekker-bg border-t border-white/5 relative overflow-hidden">
+            <!-- Background Ornaments -->
+            <div class="absolute right-0 top-1/2 transform -translate-y-1/2 w-72 h-72 bg-lekker-main/5 rounded-full filter blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-10 reveal">
+                    <span class="text-lekker-accent font-bold tracking-widest text-sm md:text-base uppercase mb-2 block">Kustomisasi</span>
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white drop-shadow-md mb-4">
+                        Racik <span class="text-lekker-main font-brand font-normal">Sendiri</span>
+                    </h2>
+                    <p class="text-orange-200/80 text-sm md:text-base max-w-2xl mx-auto">Pilih aliran lekkermu! Tim Manis legit atau Tim Gurih pedas? (Kategori manis dan gurih tidak bisa dicampur ya!)</p>
+                </div>
+
+                <div class="bg-lekker-card/60 backdrop-blur-sm border border-white/10 p-6 md:p-8 rounded-3xl shadow-2xl reveal delay-100">
+                    <!-- Step 1: Kategori -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><span class="bg-lekker-main text-lekker-bg w-6 h-6 flex items-center justify-center rounded-full text-sm">1</span> Pilih Aliran</h3>
+                        <div class="flex gap-4">
+                            <button id="cat-manis-btn" onclick="setCustomCategory('manis')" class="flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-black/40 text-gray-400 border border-white/10 hover:bg-white/10 text-sm sm:text-base">
+                                🍫 Tim Manis
+                            </button>
+                            <button id="cat-gurih-btn" onclick="setCustomCategory('gurih')" class="flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-black/40 text-gray-400 border border-white/10 hover:bg-white/10 text-sm sm:text-base">
+                                🌶️ Tim Gurih
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Toppings -->
+                    <div id="topping-selection-area" class="hidden transition-all duration-500">
+                        <div class="mb-8">
+                            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><span class="bg-lekker-main text-lekker-bg w-6 h-6 flex items-center justify-center rounded-full text-sm">2</span> Pilih Topping</h3>
+                            <div id="custom-toppings-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                <!-- Toppings injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Summary -->
+                        <div class="bg-black/50 p-5 rounded-2xl border border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+                            <div class="text-center md:text-left flex-1">
+                                <p class="text-xs text-orange-200/60 mb-1 font-medium">Base Adonan Lekker: Rp 2.000</p>
+                                <h4 class="text-lg font-bold text-white mb-1">Lekker Racikan</h4>
+                                <p id="custom-desc-display" class="text-sm text-lekker-main leading-snug">Pilih topping di atas</p>
+                            </div>
+                            <div class="text-center md:text-right w-full md:w-auto">
+                                <p class="text-xs text-gray-400 mb-1 font-medium">Total Harga</p>
+                                <p id="custom-price-display" class="text-2xl font-extrabold text-white mb-3">Rp 2.000</p>
+                                <button id="btn-add-custom" onclick="addCustomToCart()" disabled class="w-full md:w-auto py-3 md:py-4 px-8 rounded-xl font-bold text-lg text-gray-500 bg-black/50 cursor-not-allowed transition-all border border-white/10 flex items-center justify-center gap-2 mx-auto">
+                                    <i class="fas fa-cart-plus"></i> Tambah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -398,6 +457,31 @@
 
         let cart = [];
 
+        // --- Fitur Racik Sendiri State ---
+        const basePrice = 2000;
+        let currentCustomCategory = null; 
+        let selectedCustomToppings = [];
+
+        const customToppingsData = {
+            manis: [
+                { id: 'c_coklat', name: 'Coklat Meises', price: 1000 },
+                { id: 'c_keju', name: 'Keju Parut', price: 2000 },
+                { id: 'c_kacang', name: 'Kacang Sangrai', price: 1000 },
+                { id: 'c_selai', name: 'Selai Strawberry', price: 1000 },
+                { id: 'c_oreo', name: 'Oreo Crumb', price: 2000 },
+                { id: 'c_susu', name: 'Susu Kental', price: 1000 },
+                { id: 'c_marshmallow', name: 'Marshmallow', price: 2000 }
+            ],
+            gurih: [
+                { id: 'g_sosis', name: 'Sosis Sapi', price: 2000 },
+                { id: 'g_mie', name: 'Mie Kremes', price: 1000 },
+                { id: 'g_telur', name: 'Telur Puyuh', price: 3000 },
+                { id: 'g_abon', name: 'Abon Sapi', price: 2000 },
+                { id: 'g_mayo', name: 'Mayonaise', price: 1000 },
+                { id: 'g_saos', name: 'Saos Pedas', price: 0 }
+            ]
+        };
+
         const formatRupiah = (number) => {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         };
@@ -542,6 +626,140 @@
 
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('cart-total').textContent = formatRupiah(total);
+        }
+
+        // --- Logika Racik Sendiri ---
+        function setCustomCategory(cat) {
+            currentCustomCategory = cat;
+            selectedCustomToppings = []; // Reset pilihan saat pindah kategori
+            
+            // UI Updates Tombol Kategori
+            document.getElementById('cat-manis-btn').className = cat === 'manis' 
+                ? 'flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-lekker-main text-lekker-bg shadow-[0_0_15px_rgba(251,191,36,0.3)] scale-[1.02] text-sm sm:text-base border border-lekker-main'
+                : 'flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-black/40 text-gray-400 border border-white/10 hover:bg-white/10 text-sm sm:text-base';
+                
+            document.getElementById('cat-gurih-btn').className = cat === 'gurih'
+                ? 'flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-orange-600 text-white shadow-[0_0_15px_rgba(234,88,12,0.3)] scale-[1.02] text-sm sm:text-base border border-orange-600'
+                : 'flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-black/40 text-gray-400 border border-white/10 hover:bg-white/10 text-sm sm:text-base';
+
+            document.getElementById('topping-selection-area').classList.remove('hidden');
+            renderCustomToppingsUI();
+            updateCustomSummary();
+        }
+
+        function renderCustomToppingsUI() {
+            const container = document.getElementById('custom-toppings-grid');
+            container.innerHTML = '';
+            
+            if(!currentCustomCategory) return;
+
+            const toppings = customToppingsData[currentCustomCategory];
+            toppings.forEach(topping => {
+                const isSelected = selectedCustomToppings.includes(topping.id);
+                
+                const btn = document.createElement('button');
+                btn.onclick = () => toggleCustomTopping(topping.id);
+                btn.className = `flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 active:scale-95 ${
+                    isSelected 
+                    ? (currentCustomCategory === 'manis' ? 'border-lekker-main bg-lekker-main/20 text-white shadow-inner' : 'border-orange-500 bg-orange-500/20 text-white shadow-inner')
+                    : 'border-white/10 bg-black/40 text-gray-400 hover:bg-white/5'
+                }`;
+                
+                btn.innerHTML = `
+                    <span class="font-bold text-xs sm:text-sm mb-1">${topping.name}</span>
+                    <span class="text-[10px] sm:text-xs ${isSelected ? 'text-lekker-main font-bold' : 'text-gray-500'}">+${formatRupiah(topping.price)}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleCustomTopping(id) {
+            const index = selectedCustomToppings.indexOf(id);
+            if(index === -1) {
+                selectedCustomToppings.push(id);
+            } else {
+                selectedCustomToppings.splice(index, 1);
+            }
+            renderCustomToppingsUI();
+            updateCustomSummary();
+        }
+
+        function updateCustomSummary() {
+            let total = basePrice;
+            const names = [];
+            
+            if(currentCustomCategory) {
+                const toppings = customToppingsData[currentCustomCategory];
+                selectedCustomToppings.forEach(id => {
+                    const top = toppings.find(t => t.id === id);
+                    if(top) {
+                        total += top.price;
+                        names.push(top.name);
+                    }
+                });
+            }
+
+            document.getElementById('custom-price-display').textContent = formatRupiah(total);
+            document.getElementById('custom-desc-display').textContent = names.length > 0 ? names.join(' + ') : 'Belum ada topping dipilih';
+            
+            const addBtn = document.getElementById('btn-add-custom');
+            if(names.length > 0) {
+                addBtn.disabled = false;
+                addBtn.className = 'w-full md:w-auto py-3 md:py-4 px-8 rounded-xl font-bold text-lg text-lekker-bg bg-lekker-main hover:bg-lekker-accent shadow-[0_4px_15px_rgba(251,191,36,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 mx-auto md:mx-0';
+            } else {
+                addBtn.disabled = true;
+                addBtn.className = 'w-full md:w-auto py-3 md:py-4 px-8 rounded-xl font-bold text-lg text-gray-500 bg-black/50 cursor-not-allowed transition-all border border-white/10 flex items-center justify-center gap-2 mx-auto md:mx-0';
+            }
+        }
+
+        function addCustomToCart() {
+            if(selectedCustomToppings.length === 0 || !currentCustomCategory) return;
+
+            let total = basePrice;
+            const names = [];
+            const toppings = customToppingsData[currentCustomCategory];
+            
+            selectedCustomToppings.forEach(id => {
+                const top = toppings.find(t => t.id === id);
+                if(top) {
+                    total += top.price;
+                    names.push(top.name);
+                }
+            });
+
+            // Buat ID unik berdasarkan kombinasi topping yang di-sort (agar racikan identik bisa tertumpuk qty-nya)
+            const customId = 'custom_' + currentCustomCategory + '_' + selectedCustomToppings.sort().join('_');
+            const customName = 'Racikan: ' + names.join(', ');
+
+            const item = {
+                id: customId,
+                name: customName,
+                price: total,
+                desc: 'Base Lekker + ' + names.join(', '),
+                imgUrl: 'https://i.imgur.com/8e2490de-c0ae-42bc-b251-13b1b845f505.png' // Icon/Gambar generik untuk Racikan
+            };
+
+            const existingItem = cart.find(c => c.id === customId);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast('Lekker racikanmu ditambahkan!');
+            
+            // Animasi lompat pada icon cart
+            const cartBtns = document.querySelectorAll('.fa-shopping-cart');
+            cartBtns.forEach(btn => {
+                const parent = btn.parentElement;
+                parent.classList.add('scale-125', 'text-lekker-main');
+                setTimeout(() => parent.classList.remove('scale-125', 'text-lekker-main'), 200);
+            });
+            
+            // Reset state UI Racik
+            setCustomCategory(null);
+            document.getElementById('topping-selection-area').classList.add('hidden');
         }
 
         function toggleMobileMenu() {
