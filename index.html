@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHEF LEKKER PUTAR - Asli Sorogenen Bawen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lekker: {
+                            light: '#FFF8DC', // Cornsilk
+                            main: '#F4A460',  // SandyBrown
+                            dark: '#D2691E',  // Chocolate
+                            accent: '#8B4513' // SaddleBrown
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        brand: ['Pacifico', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAFAFA;
+            scroll-behavior: smooth;
+        }
+        
+        .putar-anim {
+            transition: transform 0.3s ease;
+        }
+        .putar-anim:hover {
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .menu-card {
+            transition: all 0.3s ease;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Styling untuk scrollbar custom */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F4A460; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D2691E; 
+        }
+
+        /* Modal Notification / Toast */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            bottom: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: visibility 0.5s, opacity 0.5s linear;
+            opacity: 0;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased relative pb-20 md:pb-0">
+
+    <nav class="bg-white shadow-md fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 rounded-full bg-lekker-main flex items-center justify-center mr-2 shadow-inner">
+                        <i class="fas fa-cookie-bite text-white text-xl putar-anim"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-brand text-2xl text-lekker-dark leading-tight">Chef Lekker</h1>
+                        <p class="text-[10px] text-gray-500 font-semibold -mt-1 tracking-wider">PUTAR - BAWEN</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#beranda" class="text-gray-600 hover:text-lekker-main transition-colors font-medium">Beranda</a>
+                    <a href="#menu" class="text-gray-600 hover:text-lekker-main transition-colors font-medium">Menu Spesial</a>
+                    <a href="#tentang" class="text-gray-600 hover:text-lekker-main transition-colors font-medium">Tentang Kami</a>
+                    <!-- Cart Button Desktop -->
+                    <button onclick="toggleCart()" class="relative p-2 text-gray-600 hover:text-lekker-main transition-colors">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count-desktop" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full hidden">0</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-lekker-main focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#beranda" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-lekker-main hover:bg-lekker-light">Beranda</a>
+                <a href="#menu" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-lekker-main hover:bg-lekker-light">Menu</a>
+                <a href="#tentang" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-lekker-main hover:bg-lekker-light">Tentang Kami</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <section id="beranda" class="relative bg-lekker-light overflow-hidden">
+            <div class="max-w-7xl mx-auto">
+                <div class="relative z-10 pb-8 bg-lekker-light sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32 pt-10 sm:pt-16 lg:pt-20">
+                    <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                        <div class="sm:text-center lg:text-left">
+                            <h2 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                                <span class="block xl:inline">Lekker Garing & Gurih</span><br>
+                                <span class="block text-lekker-main font-brand mt-2 text-5xl sm:text-6xl">Khas Samban Bawen</span>
+                            </h2>
+                            <p class="mt-3 text-base text-gray-600 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                                Nikmati sensasi "Lekker Putar" legendaris dari Sorogenen, Samban. Dibuat langsung saat dipesan, menjamin kehangatan dan kerenyahan di setiap gigitan. Support UMKM Lokal!
+                            </p>
+                            <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
+                                <div class="rounded-md shadow">
+                                    <a href="#menu" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-lekker-main hover:bg-lekker-dark transition-colors md:py-4 md:text-lg">
+                                        Pesan Sekarang <i class="fas fa-arrow-right ml-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+            <!-- Decorative Image / Background Shape for Hero -->
+            <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 flex justify-center items-center p-8 lg:p-0">
+                <div class="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-full lg:h-full max-w-md mx-auto">
+                    <!-- Placeholder SVG for Lekker -->
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-2xl putar-anim" style="animation: spin 30s linear infinite;">
+                        <path fill="#F4A460" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,79.6,-46.8C87.4,-34.5,90.1,-20,89.5,-6.1C88.9,7.8,85,21,77.5,32.3C70,43.6,58.9,53,46.5,60.5C34.1,68,20.4,73.6,5.8,75.9C-8.8,78.2,-24.3,77.1,-37.7,71.1C-51.1,65.1,-62.4,54.1,-70.6,41.1C-78.8,28.1,-83.9,13.1,-84.6,-2C-85.3,-17.1,-81.6,-32.3,-72.7,-43.8C-63.8,-55.3,-49.7,-63.1,-36.1,-70.5C-22.5,-77.9,-9.4,-84.9,3.7,-88.6C16.8,-92.3,30.5,-83.6,44.7,-76.4Z" transform="translate(100 100)" />
+                        <!-- Simple drawing representing a folded lekker inside the blob -->
+                        <path d="M 60 140 Q 100 160 140 140 Q 150 100 140 60 Q 100 40 60 60 Q 50 100 60 140 Z" fill="#FFF8DC" stroke="#8B4513" stroke-width="4"/>
+                        <path d="M 60 140 Q 100 120 140 140" fill="none" stroke="#D2691E" stroke-width="3" stroke-dasharray="5,5"/>
+                        <circle cx="100" cy="100" r="15" fill="#8B4513" opacity="0.8"/> <!-- Coklat -->
+                        <circle cx="85" cy="110" r="8" fill="#FFD700" opacity="0.8"/> <!-- Keju -->
+                        <circle cx="115" cy="90" r="10" fill="#FFD700" opacity="0.8"/>
+                    </svg>
+                    <style>
+                        @keyframes spin { 100% { transform: rotate(360deg); } }
+                    </style>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-extrabold text-lekker-accent sm:text-4xl">Menu Lekker Putar</h2>
+                    <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">Pilih varian favoritmu. Harga hemat, rasa nikmat khas UMKM Sorogenen!</p>
+                </div>
+
+                <!-- Filter Kategori (Opsional, untuk future use) -->
+                <div class="flex justify-center space-x-4 mb-8 overflow-x-auto pb-4">
+                    <button class="px-4 py-2 bg-lekker-main text-white rounded-full font-medium text-sm shadow-md">Semua Rasa</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full font-medium text-sm transition-colors">Manis</button>
+                    <button class="px-4 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full font-medium text-sm transition-colors">Gurih</button>
+                </div>
+
+                <!-- Grid Menu -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="menu-container">
+                    <!-- Menu items will be injected here by JS -->
+                </div>
+            </div>
+        </section>
+
+        <section id="tentang" class="py-16 bg-lekker-light">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-10">
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-extrabold text-lekker-accent mb-4">Dukung UMKM Sorogenen</h2>
+                    <p class="text-gray-700 mb-4 leading-relaxed">
+                        CHEF LEKKER PUTAR berawal dari kecintaan kami pada jajanan pasar tradisional. Berlokasi di Dusun Sorogenen, Desa Samban, Kecamatan Bawen, Kabupaten Semarang, kami berkomitmen menyajikan Lekker berkualitas dengan harga terjangkau.
+                    </p>
+                    <p class="text-gray-700 mb-6 leading-relaxed">
+                        Kata "Putar" melambangkan cara pembuatan tradisional kami menggunakan wajan putar khusus yang membuat lekker sangat tipis dan garing merata.
+                    </p>
+                    <div class="flex items-center text-lekker-dark mb-2">
+                        <i class="fas fa-map-marker-alt w-6 text-center mr-2"></i>
+                        <span>Jl. Sorogenen Raya, Samban, Bawen, Semarang, Jawa Tengah</span>
+                    </div>
+                    <div class="flex items-center text-lekker-dark mb-2">
+                        <i class="fab fa-whatsapp w-6 text-center mr-2"></i>
+                        <span>+62 812-XXXX-XXXX (Pemesanan Jumlah Besar)</span>
+                    </div>
+                    <div class="flex items-center text-lekker-dark">
+                        <i class="fas fa-clock w-6 text-center mr-2"></i>
+                        <span>Buka Setiap Hari: 15.00 - 21.00 WIB</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 w-full h-64 bg-gray-300 rounded-xl overflow-hidden shadow-lg relative flex items-center justify-center">
+                    <!-- Placeholder for Maps -->
+                     <div class="text-center p-4">
+                        <i class="fas fa-map-marked-alt text-4xl text-gray-500 mb-2"></i>
+                        <p class="text-gray-600 font-medium">Peta Lokasi Sorogenen, Samban</p>
+                        <p class="text-xs text-gray-400 mt-1">(Integrasi Google Maps disini)</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 pt-10 pb-24 md:pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0 flex items-center">
+                <i class="fas fa-cookie-bite text-lekker-main text-xl mr-2"></i>
+                <span class="font-brand text-xl text-lekker-dark">Chef Lekker Putar</span>
+            </div>
+            <p class="text-gray-500 text-sm text-center md:text-left">
+                &copy; 2026 UMKM Sorogenen Samban, Bawen. Maju Bersama!
+            </p>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <a href="#" class="text-gray-400 hover:text-lekker-main"><i class="fab fa-instagram text-xl"></i></a>
+                <a href="#" class="text-gray-400 hover:text-lekker-main"><i class="fab fa-facebook text-xl"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="md:hidden fixed bottom-4 right-4 z-40">
+        <button onclick="toggleCart()" class="bg-lekker-main text-white p-4 rounded-full shadow-2xl focus:outline-none flex items-center justify-center relative putar-anim hover:bg-lekker-dark">
+            <i class="fas fa-shopping-cart text-2xl"></i>
+            <span id="cart-count-mobile" class="absolute top-0 right-0 inline-flex items-center justify-center w-6 h-6 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full shadow-sm hidden">0</span>
+        </button>
+    </div>
+
+    <div id="cart-sidebar" class="fixed inset-0 overflow-hidden z-[100] hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 overflow-hidden">
+            <!-- Background overlay -->
+            <div id="cart-overlay" class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity opacity-0" aria-hidden="true" onclick="toggleCart()"></div>
+
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <!-- Slide-over panel -->
+                <div id="cart-panel" class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-full">
+                    <div class="flex h-full flex-col bg-white shadow-xl">
+                        
+                        <!-- Cart Header -->
+                        <div class="flex items-center justify-between px-4 py-6 sm:px-6 bg-lekker-light border-b border-gray-200">
+                            <h2 class="text-lg font-bold text-gray-900 flex items-center" id="slide-over-title">
+                                <i class="fas fa-shopping-basket text-lekker-main mr-2"></i> Keranjang Pesanan
+                            </h2>
+                            <div class="ml-3 flex h-7 items-center">
+                                <button type="button" onclick="toggleCart()" class="relative -m-2 p-2 text-gray-400 hover:text-gray-500">
+                                    <span class="absolute -inset-0.5"></span>
+                                    <span class="sr-only">Tutup panel</span>
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Cart Items -->
+                        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6" id="cart-items-container">
+                            <!-- Items will be rendered here -->
+                            <div id="empty-cart-msg" class="text-center text-gray-500 mt-10">
+                                <i class="fas fa-box-open text-4xl mb-3 text-gray-300"></i>
+                                <p>Keranjang kamu masih kosong, yuk pesan lekker!</p>
+                            </div>
+                            <ul role="list" class="-my-6 divide-y divide-gray-200" id="cart-list">
+                                <!-- JS Injected List Items -->
+                            </ul>
+                        </div>
+
+                        <!-- Cart Footer (Checkout) -->
+                        <div class="border-t border-gray-200 px-4 py-6 sm:px-6 bg-gray-50">
+                            <div class="flex justify-between text-base font-medium text-gray-900 mb-2">
+                                <p>Subtotal</p>
+                                <p id="cart-total">Rp 0</p>
+                            </div>
+                            <p class="mt-0.5 text-sm text-gray-500">Ongkir dihitung saat konfirmasi via WhatsApp.</p>
+                            
+                            <!-- Form Data Pemesan Singkat -->
+                            <div class="mt-4 space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700">Nama Pemesan / Meja</label>
+                                    <input type="text" id="cust-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lekker-main focus:ring-lekker-main sm:text-sm p-2 border" placeholder="Contoh: Budi / Meja 3">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700">Catatan (Opsional)</label>
+                                    <input type="text" id="cust-note" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-lekker-main focus:ring-lekker-main sm:text-sm p-2 border" placeholder="Contoh: Yang pisang coklat agak gosong">
+                                </div>
+                            </div>
+
+                            <div class="mt-6">
+                                <button onclick="checkoutWhatsApp()" class="flex w-full items-center justify-center rounded-md border border-transparent bg-[#25D366] px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-[#128C7E] transition-colors focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2">
+                                    <i class="fab fa-whatsapp mr-2 text-xl"></i> Pesan via WhatsApp
+                                </button>
+                            </div>
+                            <div class="mt-6 flex justify-center text-center text-sm text-gray-500">
+                                <p>
+                                    atau
+                                    <button type="button" onclick="toggleCart()" class="font-medium text-lekker-main hover:text-lekker-dark">
+                                        Lanjut Belanja <span aria-hidden="true"> &rarr;</span>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Element -->
+    <div id="toast">Notifikasi</div>
+
+    <script>
+        // Data Menu UMKM Sorogenen
+        const menuData = [
+            { id: 1, name: 'Lekker Coklat Meises', price: 2000, desc: 'Klasik manis, coklat lumer di dalam crispy di luar.', icon: 'fa-cookie' },
+            { id: 2, name: 'Lekker Keju Susu', price: 2500, desc: 'Gurihnya keju parut dipadu manisnya susu kental manis.', icon: 'fa-cheese' },
+            { id: 3, name: 'Lekker Coklat Keju', price: 3000, desc: 'Kombinasi sempurna manis dan gurih favorit semua orang.', icon: 'fa-layer-group' },
+            { id: 4, name: 'Lekker Pisang Coklat', price: 3000, desc: 'Irisan pisang segar dengan taburan meises coklat lumer.', icon: 'fa-lemon' }, // using lemon as placeholder for banana shape
+            { id: 5, name: 'Lekker Pisang Keju', price: 3500, desc: 'Pisang legit dengan keju parut melimpah.', icon: 'fa-utensils' },
+            { id: 6, name: 'Lekker Spesial Komplit', price: 5000, desc: 'Pisang, coklat, keju, dan susu dalam satu lekker jumbo.', icon: 'fa-star' }
+        ];
+
+        // State Keranjang
+        let cart = [];
+
+        // Formatting harga Rupiah
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        };
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = '';
+
+            menuData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'menu-card bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col h-full';
+                
+                // Card Content HTML
+                card.innerHTML = `
+                    <div class="p-1 bg-lekker-light flex justify-center items-center py-6 relative">
+                        <div class="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-xs font-bold text-lekker-dark shadow-sm">
+                            Asli Bawen
+                        </div>
+                        <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-inner border-2 border-lekker-main">
+                            <i class="fas ${item.icon} text-4xl text-lekker-main"></i>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-900 leading-tight">${item.name}</h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4 flex-1">${item.desc}</p>
+                        
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <span class="text-lg font-extrabold text-lekker-dark">${formatRupiah(item.price)}</span>
+                            <button onclick="addToCart(${item.id})" class="bg-lekker-main hover:bg-lekker-dark text-white rounded-full w-10 h-10 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lekker-main shadow-sm" aria-label="Tambah ke keranjang">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addToCart(id) {
+            const item = menuData.find(m => m.id === id);
+            if (!item) return;
+
+            const existingItem = cart.find(c => c.id === id);
+            if (existingItem) {
+                existingItem.qty += 1;
+            } else {
+                cart.push({ ...item, qty: 1 });
+            }
+
+            updateCartUI();
+            showToast(`${item.name} ditambahkan!`);
+            
+            // Animasi kecil di tombol cart
+            const cartBtn = document.querySelector('.fa-shopping-cart').parentElement;
+            cartBtn.classList.add('scale-110');
+            setTimeout(() => cartBtn.classList.remove('scale-110'), 200);
+        }
+
+        function updateItemQty(id, change) {
+            const index = cart.findIndex(c => c.id === id);
+            if (index !== -1) {
+                cart[index].qty += change;
+                if (cart[index].qty <= 0) {
+                    cart.splice(index, 1);
+                }
+                updateCartUI();
+            }
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Update Badges
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            
+            const badgeDesktop = document.getElementById('cart-count-desktop');
+            const badgeMobile = document.getElementById('cart-count-mobile');
+            
+            if (totalQty > 0) {
+                badgeDesktop.textContent = totalQty;
+                badgeDesktop.classList.remove('hidden');
+                badgeMobile.textContent = totalQty;
+                badgeMobile.classList.remove('hidden');
+            } else {
+                badgeDesktop.classList.add('hidden');
+                badgeMobile.classList.add('hidden');
+            }
+
+            // Update Cart List
+            const cartList = document.getElementById('cart-list');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            
+            cartList.innerHTML = '';
+            
+            if (cart.length === 0) {
+                emptyMsg.style.display = 'block';
+            } else {
+                emptyMsg.style.display = 'none';
+                
+                cart.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'flex py-4';
+                    li.innerHTML = `
+                        <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 flex items-center justify-center bg-lekker-light">
+                             <i class="fas ${item.icon} text-2xl text-lekker-main"></i>
+                        </div>
+                        <div class="ml-4 flex flex-1 flex-col">
+                            <div>
+                                <div class="flex justify-between text-base font-medium text-gray-900">
+                                    <h3 class="line-clamp-2 text-sm">${item.name}</h3>
+                                    <p class="ml-4 text-sm font-bold whitespace-nowrap">${formatRupiah(item.price * item.qty)}</p>
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">${formatRupiah(item.price)}/pcs</p>
+                            </div>
+                            <div class="flex flex-1 items-end justify-between text-sm">
+                                <div class="flex items-center border border-gray-300 rounded-md">
+                                    <button onclick="updateItemQty(${item.id}, -1)" class="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
+                                    <span class="px-2 font-medium">${item.qty}</span>
+                                    <button onclick="updateItemQty(${item.id}, 1)" class="px-2 py-1 text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
+                                </div>
+                                <div class="flex">
+                                    <button type="button" onclick="removeFromCart(${item.id})" class="font-medium text-red-500 hover:text-red-700 text-xs">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    cartList.appendChild(li);
+                });
+            }
+
+            // Update Total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cart-total').textContent = formatRupiah(total);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            const panel = document.getElementById('cart-panel');
+            const overlay = document.getElementById('cart-overlay');
+
+            if (sidebar.classList.contains('hidden')) {
+                // Buka cart
+                sidebar.classList.remove('hidden');
+                // Sedikit delay agar transisi jalan
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                    panel.classList.remove('translate-x-full');
+                    panel.classList.add('translate-x-0');
+                }, 10);
+            } else {
+                // Tutup cart
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0');
+                panel.classList.remove('translate-x-0');
+                panel.classList.add('translate-x-full');
+                
+                // Tunggu transisi selesai baru hidden
+                setTimeout(() => {
+                    sidebar.classList.add('hidden');
+                }, 500); // sesuaikan dengan durasi transisi tailwind
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'show';
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 10) {
+                nav.classList.add('shadow-lg');
+            } else {
+                nav.classList.remove('shadow-lg');
+            }
+        });
+
+        function checkoutWhatsApp() {
+            if (cart.length === 0) {
+                showToast("Keranjang masih kosong!");
+                return;
+            }
+
+            const custName = document.getElementById('cust-name').value.trim();
+            const custNote = document.getElementById('cust-note').value.trim();
+
+            if(!custName) {
+                showToast("Mohon isi Nama/Meja terlebih dahulu");
+                document.getElementById('cust-name').focus();
+                return;
+            }
+
+            // Nomor WA UMKM (Ganti dengan nomor asli)
+            const phone = "6281200000000"; 
+            
+            let message = `Halo *CHEF LEKKER PUTAR* Sorogenen!\nSaya ingin memesan:\n\n`;
+            
+            cart.forEach((item, index) => {
+                message += `${index + 1}. ${item.name} (${item.qty}x)\n`;
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            message += `\n*Total Harga: ${formatRupiah(total)}* (Belum termasuk ongkir)\n`;
+            message += `\n*Nama/Meja:* ${custName}`;
+            if(custNote) message += `\n*Catatan:* ${custNote}`;
+            
+            message += `\n\nTerima kasih, mohon segera diproses ya!`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+            
+            // Buka WhatsApp di tab baru
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderMenu();
+        };
+
+    </script>
+</body>
+</html>
