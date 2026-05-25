@@ -156,6 +156,16 @@
             0% { opacity: 0; transform: scale(0.5) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+        
+        /* Pulse for Topping Selection */
+        .topping-pulse {
+            animation: toppingPulse 0.3s ease-in-out;
+        }
+        @keyframes toppingPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="font-sans antialiased relative pb-20 md:pb-0 selection:bg-lekker-main selection:text-lekker-bg">
@@ -307,13 +317,22 @@
                     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white drop-shadow-md mb-4">
                         Racik <span class="text-lekker-main font-brand font-normal">Sendiri</span>
                     </h2>
-                    <p class="text-orange-200/80 text-sm md:text-base max-w-2xl mx-auto">Pengen mix and match? Bebas! Pilih aliran lekkermu, masukin topping sesuka hati, dan beri nama racikan super unikmu!</p>
+                    <p class="text-orange-200/80 text-sm md:text-base max-w-2xl mx-auto mb-6">Pengen mix and match? Bebas! Pilih aliran lekkermu, masukin topping sesuka hati, dan beri nama racikan super unikmu!</p>
                 </div>
 
                 <div class="bg-lekker-card/60 backdrop-blur-sm border border-white/10 p-6 md:p-8 rounded-[2rem] shadow-2xl reveal delay-100">
+                    
                     <!-- Step 1: Kategori -->
                     <div class="mb-8">
-                        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2"><span class="bg-lekker-main text-lekker-bg w-6 h-6 flex items-center justify-center rounded-full text-sm">1</span> Pilih Aliran (Base)</h3>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2"><span class="bg-lekker-main text-lekker-bg w-6 h-6 flex items-center justify-center rounded-full text-sm">1</span> Pilih Aliran (Base)</h3>
+                            
+                            <!-- Gacha Button for Gen Z -->
+                            <button onclick="randomizeRacikan()" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold py-2 px-5 rounded-full text-xs sm:text-sm shadow-[0_0_15px_rgba(236,72,153,0.4)] hover:scale-105 active:scale-95 transition-transform flex items-center gap-2 w-full sm:w-auto justify-center">
+                                <i class="fas fa-dice"></i> Gacha Acak! (Malas Pilih)
+                            </button>
+                        </div>
+                        
                         <div class="flex gap-4">
                             <button id="cat-manis-btn" onclick="setCustomCategory('manis')" class="flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-black/40 text-gray-400 border border-white/10 hover:bg-white/10 text-sm sm:text-base group">
                                 <span class="block text-2xl mb-1 group-hover:scale-110 transition-transform">🍫</span> Tim Manis
@@ -359,7 +378,7 @@
             </div>
         </section>
 
-        <!-- CEK KHODAM SECTION (Fitur Baru Gen Z) -->
+        <!-- CEK KHODAM SECTION -->
         <section id="khodam-section" class="py-16 bg-[#1a0f09] border-y border-lekker-main/20 relative overflow-hidden">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none"></div>
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -377,7 +396,6 @@
                         </button>
                     </div>
 
-                    <!-- Khodam Result Box -->
                     <div id="khodam-result-box" class="hidden mt-6 bg-gradient-to-br from-[#2d1b11] to-black border border-lekker-main/30 rounded-2xl p-6 relative overflow-hidden">
                         <i class="fas fa-star absolute top-2 right-2 text-lekker-main animate-pulse"></i>
                         <i class="fas fa-star absolute bottom-2 left-2 text-lekker-main animate-pulse delay-700"></i>
@@ -663,13 +681,12 @@
                                 <p id="cart-total" class="text-lekker-main text-xl">Rp 0</p>
                             </div>
                             
-                            <!-- Form Data Pemesan (Updated with Delivery Options) -->
+                            <!-- Form Data Pemesan -->
                             <div class="mt-2 space-y-3">
                                 <div>
                                     <input type="text" id="cust-name" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors" placeholder="Nama Kamu (Wajib)">
                                 </div>
                                 
-                                <!-- Mode Pengambilan / Delivery Option -->
                                 <div class="flex gap-2 p-1 bg-black/40 rounded-xl border border-white/10">
                                     <label class="flex-1 cursor-pointer">
                                         <input type="radio" name="deliveryOption" value="Ambil Sendiri" checked class="peer sr-only">
@@ -731,27 +748,28 @@
         let currentCustomCategory = null; 
         let selectedCustomToppings = [];
 
+        // Data Toppings with Emojis added for Visual Appeal
         const customToppingsData = {
             manis: [
-                { id: 'c_coklat', name: 'Meises Coklat', price: 1000 },
-                { id: 'c_keju', name: 'Keju Cheddar', price: 2000 },
-                { id: 'c_kacang', name: 'Kacang Sangrai', price: 1000 },
-                { id: 'c_oreo', name: 'Oreo Crumb', price: 2000 },
-                { id: 'c_susu', name: 'Susu Kental', price: 1000 },
-                { id: 'c_marshmallow', name: 'Marshmallow', price: 2000 },
-                { id: 'c_nutella', name: 'Nutella Asli', price: 3000 },
-                { id: 'c_matcha', name: 'Matcha Crunchy', price: 3000 },
-                { id: 'c_biscoff', name: 'Lotus Biscoff', price: 4000 }
+                { id: 'c_coklat', name: 'Meises Coklat', price: 1000, emoji: '🍫' },
+                { id: 'c_keju', name: 'Keju Cheddar', price: 2000, emoji: '🧀' },
+                { id: 'c_kacang', name: 'Kacang Sangrai', price: 1000, emoji: '🥜' },
+                { id: 'c_oreo', name: 'Oreo Crumb', price: 2000, emoji: '🍪' },
+                { id: 'c_susu', name: 'Susu Kental', price: 1000, emoji: '🥛' },
+                { id: 'c_marshmallow', name: 'Marshmallow', price: 2000, emoji: '☁️' },
+                { id: 'c_nutella', name: 'Nutella Asli', price: 3000, emoji: '🌰' },
+                { id: 'c_matcha', name: 'Matcha Crunchy', price: 3000, emoji: '🍵' },
+                { id: 'c_biscoff', name: 'Lotus Biscoff', price: 4000, emoji: '🍯' }
             ],
             gurih: [
-                { id: 'g_sosis', name: 'Sosis Sapi', price: 2000 },
-                { id: 'g_mie', name: 'Mie Kremes', price: 1000 },
-                { id: 'g_telur', name: 'Telur Puyuh', price: 3000 },
-                { id: 'g_abon', name: 'Abon Sapi', price: 2000 },
-                { id: 'g_mayo', name: 'Mayonaise', price: 1000 },
-                { id: 'g_saos', name: 'Saos Pedas', price: 0 },
-                { id: 'g_smokedbeef', name: 'Smoked Beef', price: 3000 },
-                { id: 'g_mozza', name: 'Mozzarella', price: 4000 }
+                { id: 'g_sosis', name: 'Sosis Sapi', price: 2000, emoji: '🌭' },
+                { id: 'g_mie', name: 'Mie Kremes', price: 1000, emoji: '🍜' },
+                { id: 'g_telur', name: 'Telur Puyuh', price: 3000, emoji: '🥚' },
+                { id: 'g_abon', name: 'Abon Sapi', price: 2000, emoji: '🥩' },
+                { id: 'g_mayo', name: 'Mayonaise', price: 1000, emoji: '🍶' },
+                { id: 'g_saos', name: 'Saos Pedas', price: 0, emoji: '🌶️' },
+                { id: 'g_smokedbeef', name: 'Smoked Beef', price: 3000, emoji: '🥓' },
+                { id: 'g_mozza', name: 'Mozzarella', price: 4000, emoji: '🧀' }
             ]
         };
 
@@ -931,22 +949,31 @@
                 const isSelected = selectedCustomToppings.includes(topping.id);
                 
                 const btn = document.createElement('button');
-                btn.onclick = () => toggleCustomTopping(topping.id);
+                btn.onclick = () => toggleCustomTopping(topping.id, btn);
                 btn.className = `flex flex-col items-center justify-center p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 active:scale-95 ${
                     isSelected 
-                    ? (currentCustomCategory === 'manis' ? 'border-lekker-main bg-lekker-main/20 text-white shadow-inner' : 'border-orange-500 bg-orange-500/20 text-white shadow-inner')
-                    : 'border-white/10 bg-black/40 text-gray-400 hover:bg-white/5'
+                    ? (currentCustomCategory === 'manis' ? 'border-lekker-main bg-lekker-main/20 text-white shadow-[inset_0_0_10px_rgba(251,191,36,0.2)]' : 'border-orange-500 bg-orange-500/20 text-white shadow-[inset_0_0_10px_rgba(249,115,22,0.2)]')
+                    : 'border-white/10 bg-black/40 text-gray-400 hover:bg-white/10 hover:border-white/20'
                 }`;
                 
+                // Use Emojis for Visual Appeal
                 btn.innerHTML = `
-                    <span class="font-bold text-xs sm:text-sm mb-1 text-center leading-tight">${topping.name}</span>
-                    <span class="text-[10px] sm:text-xs ${isSelected ? 'text-lekker-main font-bold' : 'text-gray-500'}">+${formatRupiah(topping.price)}</span>
+                    <span class="text-2xl sm:text-3xl mb-1 sm:mb-2 transform transition-transform ${isSelected ? 'scale-110 drop-shadow-lg' : 'grayscale-[50%] opacity-70'}">${topping.emoji}</span>
+                    <span class="font-bold text-[11px] sm:text-sm mb-1 text-center leading-tight tracking-wide">${topping.name}</span>
+                    <span class="text-[10px] sm:text-xs ${isSelected ? 'text-lekker-main font-extrabold' : 'text-gray-500'}">+${formatRupiah(topping.price)}</span>
                 `;
                 container.appendChild(btn);
             });
         }
 
-        function toggleCustomTopping(id) {
+        function toggleCustomTopping(id, btnElement) {
+            // Pulse animation feedback
+            if(btnElement) {
+                btnElement.classList.remove('topping-pulse');
+                void btnElement.offsetWidth;
+                btnElement.classList.add('topping-pulse');
+            }
+
             const index = selectedCustomToppings.indexOf(id);
             if(index === -1) {
                 selectedCustomToppings.push(id);
@@ -955,6 +982,39 @@
             }
             renderCustomToppingsUI();
             updateCustomSummary();
+        }
+
+        // Randomizer / Gacha Logic
+        function randomizeRacikan() {
+            // 1. Pick category
+            const cats = ['manis', 'gurih'];
+            const randomCat = cats[Math.floor(Math.random() * cats.length)];
+            setCustomCategory(randomCat);
+
+            // 2. Pick 2-3 random toppings
+            const toppings = customToppingsData[randomCat];
+            const numToppings = Math.floor(Math.random() * 2) + 2; // either 2 or 3
+            
+            // Shuffle
+            const shuffled = [...toppings].sort(() => 0.5 - Math.random());
+            const picked = shuffled.slice(0, numToppings);
+
+            // Add them
+            picked.forEach(t => {
+                toggleCustomTopping(t.id, null);
+            });
+
+            // 3. Funny name
+            const funnyNames = ['Lekker Gacha Hoki', 'Racikan Orang Dalem', 'Lekker Misteri', 'Racikan Khodam', 'Lekker Sultan Nanggung', 'Coba-Coba Berhadiah'];
+            document.getElementById('custom-name-input').value = funnyNames[Math.floor(Math.random() * funnyNames.length)];
+            
+            showToast("🎲 Racikan Gacha berhasil dibuat!");
+            
+            // Scroll down a bit to see the result
+            const summaryBox = document.getElementById('btn-add-custom');
+            if(summaryBox) {
+                summaryBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function updateCustomSummary() {
@@ -967,7 +1027,7 @@
                     const top = toppings.find(t => t.id === id);
                     if(top) {
                         total += top.price;
-                        names.push(top.name);
+                        names.push(top.emoji + " " + top.name);
                     }
                 });
             }
@@ -990,13 +1050,15 @@
 
             let total = basePrice;
             const names = [];
+            const textNames = []; // For description only
             const toppings = customToppingsData[currentCustomCategory];
             
             selectedCustomToppings.forEach(id => {
                 const top = toppings.find(t => t.id === id);
                 if(top) {
                     total += top.price;
-                    names.push(top.name);
+                    names.push(top.emoji + " " + top.name);
+                    textNames.push(top.name);
                 }
             });
 
@@ -1009,7 +1071,7 @@
                 id: customId,
                 name: finalName,
                 price: total,
-                desc: 'Base Lekker + ' + names.join(', '),
+                desc: 'Base Lekker + ' + textNames.join(', '),
                 imgUrl: currentCustomCategory === 'manis' 
                     ? 'https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' 
                     : 'https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' 
@@ -1088,7 +1150,6 @@
                 btn.disabled = false;
             }, 1200);
         }
-
 
         // --- MINI GAME LOGIC ---
         let gameActive = false;
