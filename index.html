@@ -33,6 +33,7 @@
                         'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'marquee': 'marquee 25s linear infinite',
                         'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite',
                     },
                     keyframes: {
                         float: {
@@ -66,11 +67,11 @@
             background-image: radial-gradient(#422818 1.5px, transparent 1.5px);
             background-size: 24px 24px;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru di mobile saat di-tap */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Anti Ghost Touch / Tap Delay Fix untuk Mobile */
-        button, a, input, textarea {
+        button, a, input, textarea, label {
             touch-action: manipulation;
         }
         
@@ -90,6 +91,7 @@
         #toast {
             visibility: hidden;
             min-width: 250px;
+            max-width: 90vw;
             margin-left: -125px;
             background-color: #422818;
             color: #FBBF24;
@@ -108,6 +110,13 @@
             opacity: 0;
             transform: translateY(20px) scale(0.9);
             will-change: transform, opacity;
+        }
+        @media (max-width: 640px) {
+            #toast {
+                left: 5vw;
+                margin-left: 0;
+                width: 90vw;
+            }
         }
         #toast.show {
             visibility: visible;
@@ -134,10 +143,18 @@
             transform: rotate(180deg);
         }
 
-        /* Game specific styles */
         .game-btn-active {
             transform: scale(0.9);
             filter: brightness(1.2);
+        }
+
+        /* Khodam Result Animation */
+        .khodam-result-enter {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
     </style>
 </head>
@@ -160,22 +177,22 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-5 lg:space-x-8 items-center">
-                    <a href="#beranda" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Beranda</a>
-                    <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Menu</a>
-                    <a href="#racik" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Racik</a>
-                    <a href="#game-section" class="text-lekker-main hover:text-white transition-colors font-bold text-sm lg:text-base flex items-center gap-1 animate-pulse"><i class="fas fa-gamepad"></i> Game</a>
-                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Info</a>
+                <div class="hidden lg:flex space-x-4 xl:space-x-6 items-center">
+                    <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm">Menu</a>
+                    <a href="#racik" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm">Racik</a>
+                    <a href="#khodam-section" class="text-lekker-accent hover:text-white transition-colors font-bold text-sm flex items-center gap-1"><i class="fas fa-ghost"></i> Cek Khodam</a>
+                    <a href="#game-section" class="text-lekker-main hover:text-white transition-colors font-bold text-sm flex items-center gap-1 animate-pulse"><i class="fas fa-gamepad"></i> Game</a>
+                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm">Info</a>
                     
-                    <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-transform transform hover:scale-110 active:scale-95 bg-white/5 rounded-full">
+                    <button onclick="toggleCart()" class="relative p-2 ml-2 text-orange-100 hover:text-lekker-main transition-transform transform hover:scale-110 active:scale-95 bg-white/5 rounded-full border border-white/10">
                         <i class="fas fa-shopping-cart text-xl relative z-10"></i>
                         <span id="cart-count-desktop" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm z-20">0</span>
                     </button>
                 </div>
 
                 <!-- Mobile Menu Icons -->
-                <div class="md:hidden flex items-center gap-3">
-                    <button onclick="toggleCart()" class="relative p-2 text-lekker-main hover:text-white transition-colors focus:outline-none bg-white/5 rounded-full active:bg-white/20">
+                <div class="lg:hidden flex items-center gap-3">
+                    <button onclick="toggleCart()" class="relative p-2 text-lekker-main hover:text-white transition-colors focus:outline-none bg-white/5 rounded-full border border-white/10 active:bg-white/20">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count-mobile-nav" class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm">0</span>
                     </button>
@@ -186,13 +203,14 @@
             </div>
         </div>
         
-        <!-- Mobile Menu Dropdown (Improved Anti-Bug Toggle) -->
-        <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-lekker-card/95 backdrop-blur-xl border-t border-yellow-900/50 shadow-2xl transition-all duration-300 transform -translate-y-full opacity-0 pointer-events-none z-40">
-            <div class="px-4 pt-3 pb-5 space-y-2">
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="lg:hidden fixed top-16 md:top-20 left-0 w-full bg-lekker-card/95 backdrop-blur-xl border-t border-yellow-900/50 shadow-2xl transition-all duration-300 transform -translate-y-[150%] opacity-0 pointer-events-none z-40">
+            <div class="px-4 pt-3 pb-5 space-y-2 max-h-[80vh] overflow-y-auto">
                 <a href="#beranda" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Beranda</a>
                 <a href="#menu" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Menu Favorit</a>
                 <a href="#racik" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Racik Topping</a>
-                <a href="#game-section" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-lekker-main hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">🎮 Main Game Berhadiah</a>
+                <a href="#khodam-section" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-lekker-accent bg-orange-900/20 border border-orange-500/20 hover:text-white transition-all active:scale-[0.98]">👻 Cek Khodam Jajan</a>
+                <a href="#game-section" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-lekker-main bg-yellow-900/20 border border-yellow-500/20 hover:text-white transition-all active:scale-[0.98]">🎮 Main Game Berhadiah</a>
                 <a href="#tentang" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Lokasi & FAQ</a>
             </div>
         </div>
@@ -201,8 +219,8 @@
     <main class="pt-16 md:pt-20">
         <!-- Beranda Section -->
         <section id="beranda" class="relative overflow-hidden py-12 md:py-16 lg:py-24">
-            <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob"></div>
-            <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+            <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob pointer-events-none"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000 pointer-events-none"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-14 relative z-10">
                 <div class="w-full md:w-1/2 text-center md:text-left reveal mt-4 md:mt-0 order-2 md:order-1">
@@ -218,12 +236,12 @@
                     </p>
                     
                     <div class="mt-8 md:mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
-                        <a href="#menu" class="group inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border border-transparent text-sm md:text-base font-bold rounded-full text-lekker-bg bg-lekker-main hover:bg-lekker-accent transition-all transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(251,191,36,0.3)] active:scale-95 w-full sm:w-auto">
+                        <button onclick="document.getElementById('menu').scrollIntoView()" class="group inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border border-transparent text-sm md:text-base font-bold rounded-full text-lekker-bg bg-lekker-main hover:bg-lekker-accent transition-all transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(251,191,36,0.3)] active:scale-95 w-full sm:w-auto">
                             Pesan Sekarang <i class="fas fa-shopping-bag ml-2 group-hover:scale-110 transition-transform"></i>
-                        </a>
-                        <a href="#racik" class="inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border-2 border-white/20 text-sm md:text-base font-bold rounded-full text-white hover:bg-white/10 hover:border-white transition-all active:scale-95 w-full sm:w-auto bg-black/20 backdrop-blur-sm">
+                        </button>
+                        <button onclick="document.getElementById('racik').scrollIntoView()" class="inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border-2 border-white/20 text-sm md:text-base font-bold rounded-full text-white hover:bg-white/10 hover:border-white transition-all active:scale-95 w-full sm:w-auto bg-black/20 backdrop-blur-sm">
                             <i class="fas fa-magic text-lekker-main mr-2"></i> Racik Sendiri
-                        </a>
+                        </button>
                     </div>
                 </div>
                 
@@ -232,9 +250,9 @@
                     <i class="fas fa-heart absolute bottom-10 left-[5%] md:left-0 text-xl md:text-3xl text-lekker-price animate-float z-20"></i>
                     
                     <div class="relative w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] animate-float">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-lekker-main/40 to-orange-500/20 rounded-full blur-2xl transform scale-110"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-lekker-main/40 to-orange-500/20 rounded-full blur-2xl transform scale-110 pointer-events-none"></div>
                         <div class="relative w-full h-full rounded-full p-2 md:p-3 border-dashed border-[3px] md:border-4 border-lekker-main/70 bg-lekker-card/80 shadow-2xl flex items-center justify-center backdrop-blur-sm group overflow-hidden">
-                            <img src="https://i.imgur.com/a3G88fY.png" alt="Chef Lekker" class="w-full h-full object-cover rounded-full shadow-inner bg-white transform transition duration-500 group-hover:scale-110">
+                            <img src="https://i.imgur.com/a3G88fY.png" alt="Chef Lekker" class="w-full h-full object-cover rounded-full shadow-inner bg-white transform transition duration-500 group-hover:scale-110 pointer-events-none">
                         </div>
                         <div class="absolute -bottom-4 sm:-bottom-2 -right-4 sm:-right-2 bg-lekker-card border-2 border-lekker-main px-4 py-2 rounded-2xl shadow-xl transform rotate-6 animate-float-delayed z-30">
                             <p class="text-white font-bold text-xs sm:text-sm text-center">⭐ 4.9/5<br><span class="text-[10px] text-gray-400 font-normal">Rating Pelanggan</span></p>
@@ -249,18 +267,20 @@
             <div class="whitespace-nowrap animate-marquee font-bold text-sm sm:text-base flex items-center gap-10 min-w-[200%]">
                 <span>🔥 HOT PROMO: Gratis 1 Lekker Coklat tiap beli 5 pcs! 🔥</span>
                 <span>✨ Coba Menu Baru: Matcha Crunchy Keju! ✨</span>
-                <span>🎮 MAIN GAME DAPAT KODE PROMO! Scroll ke bawah! 🎮</span>
-                <span>🛵 Bisa diambil sendiri atau kirim via Kurir Lokal! 🛵</span>
+                <span>👻 CEK KHODAM LEKKERMU DI BAWAH! 👻</span>
+                <span>🎮 MAIN GAME DAPAT KODE PROMO! 🎮</span>
+                <span>🛵 Bisa Delivery Area Terdekat! 🛵</span>
                 <span>🔥 HOT PROMO: Gratis 1 Lekker Coklat tiap beli 5 pcs! 🔥</span>
                 <span>✨ Coba Menu Baru: Matcha Crunchy Keju! ✨</span>
-                <span>🎮 MAIN GAME DAPAT KODE PROMO! Scroll ke bawah! 🎮</span>
-                <span>🛵 Bisa diambil sendiri atau kirim via Kurir Lokal! 🛵</span>
+                <span>👻 CEK KHODAM LEKKERMU DI BAWAH! 👻</span>
+                <span>🎮 MAIN GAME DAPAT KODE PROMO! 🎮</span>
+                <span>🛵 Bisa Delivery Area Terdekat! 🛵</span>
             </div>
         </div>
 
         <!-- Menu Section -->
-        <section id="menu" class="py-16 md:py-24 bg-gradient-to-b from-lekker-bg via-[#22130c] to-[#1a0f09]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="menu" class="py-16 md:py-24 bg-gradient-to-b from-lekker-bg via-[#22130c] to-[#1a0f09] relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div class="text-center mb-12 md:mb-16 reveal">
                     <span class="text-lekker-accent font-bold tracking-widest text-sm md:text-base uppercase mb-2 block">Top Picks</span>
                     <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white drop-shadow-md mb-4">
@@ -339,8 +359,44 @@
             </div>
         </section>
 
-        <!-- MINI GAME SECTION (Fitur Baru) -->
-        <section id="game-section" class="py-16 bg-gradient-to-b from-[#1a0f09] to-[#2d1b11] border-y border-lekker-main/20 relative overflow-hidden">
+        <!-- CEK KHODAM SECTION (Fitur Baru Gen Z) -->
+        <section id="khodam-section" class="py-16 bg-[#1a0f09] border-y border-lekker-main/20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none"></div>
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <div class="reveal">
+                    <span class="inline-block bg-purple-600 text-white font-bold px-3 py-1 rounded-full text-xs mb-3 shadow-[0_0_15px_rgba(147,51,234,0.5)]">✨ FITUR VIRAL ✨</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Cek Khodam <span class="text-lekker-main font-brand font-normal">Lekker-mu!</span> 👻</h2>
+                    <p class="text-orange-200/80 text-sm md:text-base mb-8">Kira-kira apa sih spirit Lekker yang ada di dalam dirimu hari ini? Coba masukin nama kamu!</p>
+                </div>
+
+                <div class="bg-black/50 border border-purple-500/30 rounded-[2rem] p-6 md:p-8 shadow-2xl reveal delay-100 backdrop-blur-sm">
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                        <input type="text" id="khodam-name" placeholder="Masukin nama panggilanmu..." class="w-full sm:w-2/3 bg-black/40 border border-white/10 text-white px-5 py-3.5 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors text-center sm:text-left text-sm sm:text-base">
+                        <button onclick="generateKhodam()" class="w-full sm:w-1/3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all transform hover:-translate-y-1 shadow-[0_4px_15px_rgba(147,51,234,0.4)] active:scale-95 flex items-center justify-center gap-2">
+                            <i class="fas fa-search-location"></i> Cek Sekarang!
+                        </button>
+                    </div>
+
+                    <!-- Khodam Result Box -->
+                    <div id="khodam-result-box" class="hidden mt-6 bg-gradient-to-br from-[#2d1b11] to-black border border-lekker-main/30 rounded-2xl p-6 relative overflow-hidden">
+                        <i class="fas fa-star absolute top-2 right-2 text-lekker-main animate-pulse"></i>
+                        <i class="fas fa-star absolute bottom-2 left-2 text-lekker-main animate-pulse delay-700"></i>
+                        <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-2">Khodam Jajan Kamu Adalah:</p>
+                        <h3 id="khodam-title" class="text-2xl sm:text-3xl font-extrabold text-lekker-main font-brand mb-2 drop-shadow-md">Lekker Pisang Penyet</h3>
+                        <p id="khodam-desc" class="text-white/90 text-sm sm:text-base italic bg-white/5 p-3 rounded-lg border border-white/5">"Kelihatan tegar di luar, padahal dalemnya gampang lumer (baperan)."</p>
+                        
+                        <div class="mt-5">
+                            <button onclick="document.getElementById('menu').scrollIntoView()" class="text-xs bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full font-medium transition-colors border border-white/10">
+                                Beliin Khodamnya Jajan 🍕
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MINI GAME SECTION -->
+        <section id="game-section" class="py-16 bg-gradient-to-b from-[#2d1b11] to-[#1a0f09] border-b border-lekker-main/20 relative overflow-hidden">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
                 <div class="reveal">
                     <span class="inline-block bg-lekker-price text-white font-bold px-3 py-1 rounded-full text-xs mb-3 animate-pulse">GAMES ANTI BOSEN!</span>
@@ -350,7 +406,6 @@
 
                 <div class="bg-black/40 border border-white/10 rounded-[2rem] p-6 md:p-10 shadow-2xl reveal delay-100 max-w-lg mx-auto relative">
                     
-                    <!-- Game Info Header -->
                     <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl mb-8">
                         <div>
                             <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Waktu</p>
@@ -362,19 +417,15 @@
                         </div>
                     </div>
 
-                    <!-- Giant Lekker Button -->
                     <div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto cursor-pointer flex items-center justify-center group" onclick="tapLekker(this)">
-                        <!-- Glow -->
                         <div class="absolute inset-0 bg-lekker-main/30 rounded-full blur-xl group-hover:bg-lekker-main/50 transition-all duration-200 pointer-events-none"></div>
                         <img src="https://i.imgur.com/a3G88fY.png" alt="Tap Lekker" id="game-lekker-img" class="relative w-full h-full object-cover rounded-full border-4 border-lekker-main shadow-[0_0_20px_rgba(251,191,36,0.6)] transform transition-transform duration-75 select-none" draggable="false">
                         
-                        <!-- Floating Text Overlay -->
                         <div id="start-game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full pointer-events-none transition-opacity">
                             <span class="text-white font-bold text-lg drop-shadow-md">TAP UNTUK MULAI!</span>
                         </div>
                     </div>
 
-                    <!-- Game Result Modal -->
                     <div id="game-result" class="hidden mt-8 p-4 rounded-xl border border-dashed transition-all">
                         <h4 id="game-result-title" class="text-xl font-bold mb-2"></h4>
                         <p id="game-result-desc" class="text-sm text-gray-300 mb-3"></p>
@@ -387,13 +438,11 @@
                 </div>
             </div>
             
-            <!-- Confetti Canvas (will just use CSS emojis for simplicity) -->
             <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden z-0 hidden"></div>
         </section>
 
         <!-- Testimoni / Social Proof Section -->
-        <section id="testimoni" class="py-16 bg-[#22130c] border-y border-white/5">
-            <!-- (Testimoni Content Sama Seperti Sebelumnya) -->
+        <section id="testimoni" class="py-16 bg-[#22130c] border-b border-white/5">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10 reveal">
                     <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Kata <span class="text-lekker-main font-brand font-normal">Bestie</span> 💬</h2>
@@ -527,7 +576,7 @@
                                 <i class="fas fa-chevron-down text-lekker-main faq-icon transition-transform"></i>
                             </div>
                             <div class="faq-content bg-lekker-bg px-4 text-sm text-gray-400">
-                                <p class="pt-2">Untuk sementara pesanan bisa diambil sendiri (Pick-up) atau jika area Bawen dekat bisa dibantu kirim dengan ojek lokal/kurir. Silakan diskusi ongkir via WA ya!</p>
+                                <p class="pt-2">Untuk sementara pesanan bisa diambil sendiri (Pick-up) atau jika area Bawen dekat bisa dibantu kirim dengan ojek lokal/kurir. Jangan lupa pilih opsi 'Kirim' saat checkout WA ya!</p>
                             </div>
                         </div>
                         <div class="faq-item bg-lekker-bg border border-white/10 rounded-xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
@@ -565,7 +614,7 @@
         </div>
     </footer>
 
-    <!-- Floating WA Button for fast chat (Gen Z loves direct contact) -->
+    <!-- Floating WA Button -->
     <a href="https://wa.me/6282230652727" target="_blank" class="fixed bottom-6 left-6 z-[90] bg-[#25D366] text-white p-3 sm:p-4 rounded-full shadow-[0_4px_15px_rgba(37,211,102,0.4)] hover:bg-[#20b858] transition-transform transform hover:scale-110 flex items-center justify-center group hidden md:flex">
         <i class="fab fa-whatsapp text-3xl"></i>
         <span class="absolute left-14 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md pointer-events-none">Tanya-tanya dulu?</span>
@@ -614,11 +663,28 @@
                                 <p id="cart-total" class="text-lekker-main text-xl">Rp 0</p>
                             </div>
                             
-                            <!-- Form Data Pemesan -->
+                            <!-- Form Data Pemesan (Updated with Delivery Options) -->
                             <div class="mt-2 space-y-3">
                                 <div>
                                     <input type="text" id="cust-name" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors" placeholder="Nama Kamu (Wajib)">
                                 </div>
+                                
+                                <!-- Mode Pengambilan / Delivery Option -->
+                                <div class="flex gap-2 p-1 bg-black/40 rounded-xl border border-white/10">
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="deliveryOption" value="Ambil Sendiri" checked class="peer sr-only">
+                                        <div class="text-center py-2 px-1 rounded-lg peer-checked:bg-lekker-main peer-checked:text-black text-gray-400 font-bold text-xs sm:text-sm transition-all">
+                                            🚶 Ambil Sendiri
+                                        </div>
+                                    </label>
+                                    <label class="flex-1 cursor-pointer">
+                                        <input type="radio" name="deliveryOption" value="Kirim via Kurir" class="peer sr-only">
+                                        <div class="text-center py-2 px-1 rounded-lg peer-checked:bg-lekker-main peer-checked:text-black text-gray-400 font-bold text-xs sm:text-sm transition-all">
+                                            🛵 Dikirim (Kurir)
+                                        </div>
+                                    </label>
+                                </div>
+
                                 <div class="flex gap-2">
                                     <div class="flex-1 relative">
                                         <input type="text" id="promo-code" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors font-mono uppercase" placeholder="Punya Kode Promo?">
@@ -632,7 +698,7 @@
 
                             <div class="mt-5">
                                 <button onclick="checkoutWhatsApp()" class="group flex w-full items-center justify-center rounded-xl border border-transparent bg-[#25D366] px-6 py-4 text-base sm:text-lg font-bold text-white shadow-[0_4px_15px_0_rgba(37,211,102,0.3)] hover:bg-[#20b858] transition-all transform hover:-translate-y-1 active:scale-[0.98]">
-                                    <i class="fab fa-whatsapp mr-2 text-xl group-hover:scale-125 transition-transform"></i> Checkout via WA
+                                    <i class="fab fa-whatsapp mr-2 text-xl group-hover:scale-125 transition-transform"></i> Lanjut ke WA
                                 </button>
                             </div>
                         </div>
@@ -971,6 +1037,59 @@
             window.location.hash = "#menu"; 
         }
 
+        // --- CEK KHODAM LOGIC ---
+        const khodamDatabase = [
+            { name: "Lekker Keju Gondrong", desc: "Tipe yang salty tapi bikin kangen. Orang lain liat kamu dingin, padahal dalemnya asik." },
+            { name: "Lekker Pisang Penyet", desc: "Kelihatan tangguh dan tegar di luar, eh padahal dalemnya gampang lumer (baperan)." },
+            { name: "Lekker Coklat Belepotan", desc: "Manis banget! Suka nyenengin orang lain walau kadang sampai lupa sama diri sendiri." },
+            { name: "Lekker Mie Kremes Pedas", desc: "Agak sedikit rebel, suka ceplas-ceplos, tapi sebenernya kamu itu peneduh suasana grup." },
+            { name: "Lekker Matcha Lumer", desc: "Aesthetic abis. Vibesnya kalem, suka healing, tapi dompet selalu krisis akhir bulan." },
+            { name: "Wajan Lekker Panas", desc: "Gampang emosian kalau lagi laper. Senggol bacok! Tapi kalau udah dikasih makan langsung kalem." },
+            { name: "Spatula Lekker", desc: "Sang pengaduk suasana. Tukang bikin heboh grup tongkrongan. Kalau nggak ada kamu sepi." },
+            { name: "Lekker Kosong (Angin)", desc: "Suka overthinking hal yang nggak ada. Halusinasi tingkat dewa, tapi paling setia sama pasangan." }
+        ];
+
+        function generateKhodam() {
+            const inputName = document.getElementById('khodam-name').value.trim();
+            if(!inputName) {
+                showToast("Eh isi dulu nama kamu biar bisa dicek khodamnya!");
+                document.getElementById('khodam-name').focus();
+                return;
+            }
+
+            const btn = document.querySelector('#khodam-section button');
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Lagi Nerawang...`;
+            btn.disabled = true;
+
+            // Artificial delay to make it dramatic
+            setTimeout(() => {
+                const resultBox = document.getElementById('khodam-result-box');
+                const title = document.getElementById('khodam-title');
+                const desc = document.getElementById('khodam-desc');
+                
+                // Deterministic random based on name length & char codes
+                let seed = 0;
+                for(let i=0; i < inputName.length; i++) seed += inputName.charCodeAt(i);
+                
+                const khodam = khodamDatabase[seed % khodamDatabase.length];
+                
+                title.textContent = khodam.name;
+                desc.textContent = `"${khodam.desc}"`;
+                
+                resultBox.classList.remove('hidden');
+                
+                // Re-trigger animation
+                resultBox.classList.remove('khodam-result-enter');
+                void resultBox.offsetWidth; // trigger reflow
+                resultBox.classList.add('khodam-result-enter');
+
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+            }, 1200);
+        }
+
+
         // --- MINI GAME LOGIC ---
         let gameActive = false;
         let gameScore = 0;
@@ -978,12 +1097,10 @@
         let gameInterval = null;
 
         function tapLekker(el) {
-            // Visual feedback for tapping
             el.classList.add('game-btn-active');
             setTimeout(() => el.classList.remove('game-btn-active'), 50);
 
             if(!gameActive) {
-                // If game hasn't started and time is full, start it.
                 if(gameTimeLeft === 10) startGame();
                 return;
             }
@@ -991,12 +1108,10 @@
             gameScore++;
             document.getElementById('game-score').textContent = gameScore;
 
-            // Spawn floating text +1
             const plusOne = document.createElement('span');
             plusOne.textContent = '+1';
             plusOne.className = 'absolute text-lekker-main font-bold text-2xl font-brand drop-shadow-md pointer-events-none transition-all duration-500 opacity-100';
             
-            // Randomize position near center
             const offsetX = (Math.random() - 0.5) * 80;
             const offsetY = (Math.random() - 0.5) * 80;
             plusOne.style.left = `calc(50% + ${offsetX}px)`;
@@ -1004,7 +1119,6 @@
             
             el.appendChild(plusOne);
 
-            // Animate float up and fade
             setTimeout(() => {
                 plusOne.style.transform = 'translateY(-50px) scale(1.5)';
                 plusOne.style.opacity = '0';
@@ -1014,7 +1128,6 @@
                 plusOne.remove();
             }, 500);
 
-            // Win condition check
             if(gameScore >= 50) {
                 endGame(true);
             }
@@ -1030,7 +1143,6 @@
             document.getElementById('game-result').classList.add('hidden');
             document.getElementById('promo-code-box').classList.add('hidden');
 
-            // Timer
             gameInterval = setInterval(() => {
                 gameTimeLeft--;
                 document.getElementById('game-time').textContent = gameTimeLeft;
@@ -1062,11 +1174,9 @@
                 resultDesc.innerHTML = 'Selamat! Kamu berhasil tap 50x. Ini rahasia kode promo buat kamu, jangan lupa dipakai pas checkout ya!';
                 promoBox.classList.remove('hidden');
                 
-                // Set the code input automatically if user wants to play along
                 document.getElementById('promo-code').value = "LEKKERGEBOY";
                 showToast("Kode Promo otomatis ditambahkan di Keranjang!");
                 
-                // Simple Confetti effect simulation via css shapes (pseudo)
                 createConfetti();
             } else {
                 resultBox.classList.add('border-red-500', 'bg-red-500/10');
@@ -1124,10 +1234,12 @@
             const menu = document.getElementById('mobile-menu');
             if (menu.classList.contains('opacity-0')) {
                 // Open
-                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-full');
+                menu.classList.remove('opacity-0', 'pointer-events-none');
+                menu.classList.replace('-translate-y-[150%]', 'translate-y-0');
             } else {
                 // Close
-                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-full');
+                menu.classList.add('opacity-0', 'pointer-events-none');
+                menu.classList.replace('translate-y-0', '-translate-y-[150%]');
             }
         }
 
@@ -1165,6 +1277,9 @@
             const custName = document.getElementById('cust-name').value.trim();
             const promoCode = document.getElementById('promo-code').value.trim().toUpperCase();
             const custNote = document.getElementById('cust-note').value.trim();
+            
+            // Get selected delivery option (Ambil Sendiri / Kirim)
+            const deliveryOption = document.querySelector('input[name="deliveryOption"]:checked').value;
 
             if(!custName) {
                 showToast("Tulis nama kamu dulu dong bestie.");
@@ -1174,7 +1289,8 @@
 
             const phone = "6282230652727"; 
             
-            let message = `Halo *CHEF LEKKER PUTAR*! 👋\nPesanan atas nama: *${custName}*\n\n`;
+            let message = `Halo *CHEF LEKKER PUTAR*! 👋\nPesanan atas nama: *${custName}*\n`;
+            message += `Metode: *${deliveryOption}*\n\n`;
             
             cart.forEach((item) => {
                 message += `▪️ *${item.name}* (${item.qty}x)\n   ↳ _${item.desc}_\n   💰 ${formatRupiah(item.price * item.qty)}\n\n`;
@@ -1189,7 +1305,11 @@
             if(promoCode) message += `🎟️ *KODE PROMO:* ${promoCode}\n`;
             if(custNote) message += `📝 *Catatan:* ${custNote}\n`;
             
-            message += `\nTolong siapin yaa, makasih banyak! 🙏`;
+            if(deliveryOption === "Kirim via Kurir") {
+                message += `\nMohon dihitung sekalian ongkirnya ya kak! 🙏`;
+            } else {
+                message += `\nTolong disiapkan yaa, makasih banyak! 🙏`;
+            }
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
