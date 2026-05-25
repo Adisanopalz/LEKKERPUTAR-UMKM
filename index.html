@@ -743,6 +743,20 @@
 
         let cart = [];
 
+        // --- Core Utility Functions (Moved Up to fix ReferenceErrors) ---
+        const formatRupiah = (number) => {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-check-circle mr-2 text-[#25D366]"></i> ${message}`;
+            toast.className = 'show';
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+
         // --- Fitur Racik Sendiri State ---
         const basePrice = 2000;
         let currentCustomCategory = null; 
@@ -771,10 +785,6 @@
                 { id: 'g_smokedbeef', name: 'Smoked Beef', price: 3000, emoji: '🥓' },
                 { id: 'g_mozza', name: 'Mozzarella', price: 4000, emoji: '🧀' }
             ]
-        };
-
-        const formatRupiah = (number) => {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         };
 
         function renderMenu() {
