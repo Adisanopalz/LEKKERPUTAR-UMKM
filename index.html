@@ -6,7 +6,7 @@
     <title>CHEF LEKKER PUTAR - Asli Sorogenen Bawen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -25,6 +25,28 @@
                     fontFamily: {
                         sans: ['Poppins', 'sans-serif'],
                         brand: ['Pacifico', 'cursive'],
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'float-delayed': 'float 4s ease-in-out 2s infinite',
+                        'blob': 'blob 7s infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(20px, -30px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -35,34 +57,24 @@
             background-color: #2d1b11; 
             color: #fdf3e7;
             scroll-behavior: smooth;
-            /* Subtle pattern overlay to match poster vibe */
-            background-image: radial-gradient(#422818 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(#422818 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            overflow-x: hidden;
         }
         
         .putar-anim {
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform;
         }
         .putar-anim:hover {
-            transform: rotate(5deg) scale(1.05);
+            transform: rotate(8deg) scale(1.08);
         }
 
-        /* Styling untuk scrollbar custom */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2d1b11; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #FBBF24; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #F59E0B; 
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #2d1b11; }
+        ::-webkit-scrollbar-thumb { background: #FBBF24; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #F59E0B; }
 
-        /* Modal Notification / Toast */
         #toast {
             visibility: hidden;
             min-width: 250px;
@@ -78,63 +90,64 @@
             left: 50%;
             bottom: 30px;
             font-size: 14px;
-            font-weight: bold;
+            font-weight: 600;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: visibility 0.5s, opacity 0.5s linear, transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(20px) scale(0.9);
+            will-change: transform, opacity;
         }
         #toast.show {
             visibility: visible;
             opacity: 1;
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
         }
 
-        /* Scroll Animation Classes */
+        /* Optimized Reveal Animation to prevent Lag */
         .reveal {
             opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
+            will-change: transform, opacity;
         }
     </style>
 </head>
-<body class="font-sans antialiased relative pb-20 md:pb-0">
+<body class="font-sans antialiased relative pb-20 md:pb-0 selection:bg-lekker-main selection:text-lekker-bg">
 
-    <nav class="bg-lekker-bg/95 backdrop-blur-sm shadow-xl border-b border-lekker-card fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+    <!-- Navbar -->
+    <nav class="bg-lekker-bg/90 backdrop-blur-md shadow-lg border-b border-white/5 fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="flex justify-between items-center h-16 md:h-20">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <img src="https://i.imgur.com/a3G88fY.png" alt="Logo Lekker" class="w-11 h-11 rounded-full mr-3 border-2 border-lekker-main putar-anim object-cover bg-white">
-                    <div>
-                        <h1 class="font-brand text-2xl text-lekker-main leading-tight drop-shadow-md">Chef Lekker</h1>
-                        <p class="text-[10px] text-orange-200 font-semibold -mt-1 tracking-wider text-center">PUTAR - BAWEN</p>
+                <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <div class="relative">
+                        <div class="absolute -inset-1 bg-lekker-main rounded-full opacity-0 group-hover:opacity-40 blur transition duration-300"></div>
+                        <img src="https://i.imgur.com/a3G88fY.png" alt="Logo Lekker" class="relative w-10 h-10 md:w-12 md:h-12 rounded-full mr-3 border-2 border-lekker-main putar-anim object-cover bg-white shadow-md">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h1 class="font-brand text-xl md:text-2xl text-lekker-main leading-tight drop-shadow-sm group-hover:text-lekker-text transition-colors">Chef Lekker</h1>
+                        <p class="text-[9px] md:text-[10px] text-orange-200/80 font-medium -mt-1 tracking-[0.15em]">PUTAR - BAWEN</p>
                     </div>
                 </div>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#beranda" class="text-orange-100 hover:text-lekker-main transition-colors font-medium">Beranda</a>
-                    <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium">Menu Pilihan</a>
-                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium">Info Order</a>
-                    <!-- Cart Button Desktop -->
-                    <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-colors putar-anim">
-                        <i class="fas fa-shopping-cart text-xl"></i>
-                        <span id="cart-count-desktop" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm">0</span>
+                    <a href="#beranda" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Beranda</a>
+                    <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Menu Pilihan</a>
+                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Info Order</a>
+                    
+                    <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-transform transform hover:scale-110 active:scale-95">
+                        <div class="absolute inset-0 bg-lekker-card rounded-full scale-0 transition-transform duration-200"></div>
+                        <i class="fas fa-shopping-cart text-xl relative z-10"></i>
+                        <span id="cart-count-desktop" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-[10px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm z-20">0</span>
                     </button>
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center gap-4">
-                    <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-colors focus:outline-none">
+                <!-- Mobile Menu Icons -->
+                <div class="md:hidden flex items-center gap-3">
+                    <button onclick="toggleCart()" class="relative p-2 text-lekker-main hover:text-white transition-colors focus:outline-none">
                         <i class="fas fa-shopping-cart text-xl"></i>
-                        <span id="cart-count-mobile-nav" class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm">0</span>
+                        <span id="cart-count-mobile-nav" class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[9px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm">0</span>
                     </button>
-                    <button onclick="toggleMobileMenu()" class="text-orange-100 hover:text-lekker-main focus:outline-none">
+                    <button onclick="toggleMobileMenu()" class="text-orange-100 hover:text-lekker-main focus:outline-none p-1">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -142,112 +155,141 @@
         </div>
         
         <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="md:hidden hidden bg-lekker-card border-t border-yellow-900 absolute w-full shadow-2xl">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#beranda" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-colors">Beranda</a>
-                <a href="#menu" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-colors">Menu Pilihan</a>
-                <a href="#tentang" onclick="toggleMobileMenu()" class="block px-3 py-2 rounded-md text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-colors">Info Order</a>
+        <div id="mobile-menu" class="md:hidden hidden bg-lekker-card/95 backdrop-blur-md border-t border-yellow-900/50 absolute w-full shadow-2xl origin-top transition-all duration-300">
+            <div class="px-4 pt-3 pb-5 space-y-2">
+                <a href="#beranda" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Beranda</a>
+                <a href="#menu" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Menu Pilihan</a>
+                <a href="#tentang" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Info Order</a>
             </div>
         </div>
     </nav>
 
-    <main class="pt-16">
+    <main class="pt-16 md:pt-20">
         <!-- Beranda Section -->
-        <section id="beranda" class="relative overflow-hidden py-10 lg:py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center gap-10">
-                <div class="lg:w-1/2 text-center lg:text-left reveal">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-lekker-card border border-yellow-700/50 text-lekker-main text-sm font-bold mb-6">
-                        <i class="fas fa-bullhorn text-lekker-accent"></i> OPEN ORDER
+        <section id="beranda" class="relative overflow-hidden py-12 md:py-16 lg:py-24">
+            <!-- Animated Decorative Blobs -->
+            <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob"></div>
+            <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-14 relative z-10">
+                
+                <!-- Text Content -->
+                <div class="w-full md:w-1/2 text-center md:text-left reveal mt-4 md:mt-0 order-2 md:order-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-lekker-card/80 border border-lekker-main/30 text-lekker-main text-xs md:text-sm font-bold mb-6 shadow-sm backdrop-blur-sm">
+                        <i class="fas fa-bullhorn text-lekker-accent animate-pulse"></i> OPEN ORDER HARI INI
                     </div>
-                    <h2 class="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl mb-4">
-                        <span class="block text-lekker-main font-brand drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]">Chef Lekker Putar</span>
-                        <span class="block text-3xl sm:text-4xl mt-2">Sensasi Garing Khas Bawen</span>
+                    <h2 class="text-4xl sm:text-5xl lg:text-6xl tracking-tight font-extrabold text-white mb-4 lg:leading-[1.1]">
+                        <span class="block text-lekker-main font-brand drop-shadow-md mb-1 md:mb-2 text-5xl sm:text-6xl lg:text-7xl">Chef Lekker</span>
+                        <span class="block text-2xl sm:text-3xl lg:text-4xl text-orange-50 font-medium">Sensasi Garing Khas Bawen</span>
                     </h2>
-                    <p class="mt-4 text-base text-orange-200 sm:text-lg md:text-xl font-medium max-w-xl mx-auto lg:mx-0">
-                        Nikmati jajanan legendaris dari Sorogenen. Dibuat fresh saat Anda pesan dengan topping melimpah mulai dari Rp 2.000 saja!
+                    <p class="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-orange-200/90 font-light max-w-xl mx-auto md:mx-0 leading-relaxed">
+                        Nikmati jajanan legendaris dari Sorogenen. Dibuat fresh saat Anda pesan dengan topping melimpah mulai dari Rp 2.000 saja! Pesen sekarang yuk!
                     </p>
-                    <div class="mt-8 flex justify-center lg:justify-start gap-4">
-                        <a href="#menu" class="inline-flex items-center justify-center px-8 py-3.5 border border-transparent text-base font-bold rounded-full text-lekker-bg bg-lekker-main hover:bg-lekker-accent transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(251,191,36,0.4)]">
-                            Lihat Menu <i class="fas fa-book-open ml-2"></i>
+                    
+                    <div class="mt-8 md:mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                        <a href="#menu" class="group inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border border-transparent text-sm md:text-base font-bold rounded-full text-lekker-bg bg-lekker-main hover:bg-lekker-accent transition-all transform hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(251,191,36,0.3)] active:scale-95 w-full sm:w-auto">
+                            Pesan Sekarang <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </a>
-                        <a href="https://wa.me/6282230652727" target="_blank" class="inline-flex items-center justify-center px-8 py-3.5 border-2 border-lekker-main text-base font-bold rounded-full text-lekker-main hover:bg-lekker-main hover:text-lekker-bg transition-all transform hover:scale-105">
-                            Hubungi Kami
+                        <a href="https://wa.me/6282230652727" target="_blank" class="inline-flex items-center justify-center px-6 py-3.5 md:px-8 md:py-4 border-2 border-lekker-main/50 text-sm md:text-base font-bold rounded-full text-lekker-main hover:bg-lekker-main/10 hover:border-lekker-main transition-all active:scale-95 w-full sm:w-auto bg-lekker-bg/50 backdrop-blur-sm">
+                            <i class="fab fa-whatsapp text-lg mr-2"></i> Info Lanjut
                         </a>
                     </div>
                 </div>
                 
-                <div class="lg:w-1/2 flex justify-center lg:justify-end reveal relative">
-                    <!-- Ornamen bintang/sparkles -->
-                    <i class="fas fa-sparkles absolute top-0 right-10 text-4xl text-lekker-main animate-pulse"></i>
-                    <i class="fas fa-star absolute bottom-10 left-0 text-2xl text-lekker-accent animate-bounce"></i>
+                <!-- Hero Image -->
+                <div class="w-full md:w-1/2 flex justify-center md:justify-end relative order-1 md:order-2 pt-4 md:pt-0">
+                    <!-- Ornaments -->
+                    <i class="fas fa-sparkles absolute top-4 right-[10%] md:right-10 text-3xl md:text-4xl text-lekker-main animate-pulse z-20"></i>
+                    <i class="fas fa-star absolute bottom-4 left-[10%] md:left-0 text-xl md:text-2xl text-lekker-accent animate-float z-20"></i>
                     
-                    <div class="relative w-72 h-72 sm:w-96 sm:h-96 rounded-full p-2 border-dashed border-4 border-lekker-main bg-lekker-card/50 shadow-2xl flex items-center justify-center putar-anim">
-                        <img src="https://i.imgur.com/a3G88fY.png" alt="Chef Lekker" class="w-full h-full object-cover rounded-full shadow-inner bg-white">
+                    <!-- Main Hero Image Container -->
+                    <div class="relative w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] md:w-[400px] md:h-[400px] animate-float">
+                        <!-- Glow behind image -->
+                        <div class="absolute inset-0 bg-lekker-main/20 rounded-full blur-2xl transform scale-110"></div>
+                        <!-- Frame -->
+                        <div class="relative w-full h-full rounded-full p-2 md:p-3 border-dashed border-[3px] md:border-4 border-lekker-main/70 bg-lekker-card/60 shadow-2xl flex items-center justify-center backdrop-blur-sm group overflow-hidden">
+                            <img src="https://i.imgur.com/a3G88fY.png" alt="Chef Lekker" class="w-full h-full object-cover rounded-full shadow-inner bg-white transform transition duration-500 group-hover:scale-105">
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Menu Section (Mengikuti gaya poster polaroid) -->
-        <section id="menu" class="py-20 bg-gradient-to-b from-lekker-bg to-[#1a0f09]">
+        <!-- Menu Section -->
+        <section id="menu" class="py-16 md:py-24 bg-gradient-to-b from-lekker-bg via-[#22130c] to-[#1a0f09]">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16 reveal">
-                    <h2 class="text-4xl font-extrabold text-lekker-main font-brand drop-shadow-lg mb-2">Menu Favorit</h2>
-                    <div class="w-24 h-1 bg-lekker-accent mx-auto rounded-full mb-4"></div>
-                    <p class="max-w-2xl text-lg text-orange-200 mx-auto">Pilih varian kesukaanmu. Garing di luar, lumer di dalam!</p>
+                <div class="text-center mb-12 md:mb-16 reveal">
+                    <span class="text-lekker-accent font-bold tracking-widest text-sm md:text-base uppercase mb-2 block">Pilihan Tersedia</span>
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white drop-shadow-md mb-4">
+                        Menu <span class="text-lekker-main font-brand font-normal">Favorit</span>
+                    </h2>
+                    <div class="w-16 md:w-24 h-1 bg-lekker-main/50 mx-auto rounded-full mb-6"></div>
+                    <p class="max-w-2xl text-sm md:text-base lg:text-lg text-orange-200/80 mx-auto px-4">Garing di luar, lumer di dalam! Harga ramah di kantong rasanya bikin borong.</p>
                 </div>
 
-                <!-- Grid Menu (Polaroid Style) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12" id="menu-container">
+                <!-- Grid Menu (Polaroid Style, responsive optimized) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 px-2 sm:px-0" id="menu-container">
                     <!-- Menu items will be injected here by JS -->
                 </div>
             </div>
         </section>
 
         <!-- Tentang Section -->
-        <section id="tentang" class="py-20 bg-lekker-card border-t-4 border-lekker-main border-dashed">
+        <section id="tentang" class="py-16 md:py-24 bg-lekker-card relative overflow-hidden">
+            <!-- Decorative Top Border -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-lekker-main to-transparent opacity-30"></div>
+            
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="bg-lekker-bg rounded-3xl shadow-2xl overflow-hidden reveal border border-yellow-900">
-                    <div class="flex flex-col md:flex-row">
-                        <div class="md:w-1/2 p-10 lg:p-14 flex flex-col justify-center">
-                            <h2 class="text-3xl font-extrabold text-lekker-main mb-6 flex items-center gap-3">
-                                <i class="fas fa-store"></i> Info Pemesanan
-                            </h2>
-                            <p class="text-orange-100 mb-8 leading-relaxed text-lg">
-                                CHEF LEKKER PUTAR siap menyajikan kelezatan untuk menemani waktu santai Anda. Kami berlokasi di Dusun Sorogenen, Bawen. 
-                            </p>
-                            
-                            <div class="space-y-4">
-                                <a href="https://wa.me/6282230652727" target="_blank" class="flex items-center p-4 bg-[#25D366]/10 border border-[#25D366]/30 rounded-xl hover:bg-[#25D366]/20 transition-colors group cursor-pointer text-white">
-                                    <div class="w-12 h-12 bg-[#25D366] rounded-full flex items-center justify-center text-xl shadow-lg group-hover:scale-110 transition-transform">
-                                        <i class="fab fa-whatsapp"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <p class="text-sm text-gray-400">WhatsApp Order</p>
-                                        <p class="font-bold text-lg">082-230652727</p>
-                                    </div>
-                                </a>
+                <div class="bg-lekker-bg/80 backdrop-blur-lg rounded-[2rem] shadow-2xl overflow-hidden reveal border border-white/5 flex flex-col lg:flex-row">
+                    
+                    <!-- Info Text Area -->
+                    <div class="lg:w-1/2 p-8 sm:p-10 lg:p-14 flex flex-col justify-center order-2 lg:order-1">
+                        <div class="inline-block bg-lekker-card/50 px-4 py-1.5 rounded-full text-xs font-bold text-orange-200 mb-4 w-max border border-white/5">UMKM LOKAL</div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-6">
+                            Pusat <span class="text-lekker-main font-brand font-normal">Pemesanan</span>
+                        </h2>
+                        <p class="text-orange-100/80 mb-8 leading-relaxed text-sm sm:text-base lg:text-lg">
+                            CHEF LEKKER PUTAR siap menyajikan kelezatan jajanan nostalgia untuk menemani waktu santai Anda. Kami berlokasi di Dusun Sorogenen, Bawen. 
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <!-- Button WA Cepat -->
+                            <a href="https://wa.me/6282230652727" target="_blank" class="flex items-center p-3 sm:p-4 bg-[#25D366]/10 border border-[#25D366]/30 rounded-2xl hover:bg-[#25D366]/20 transition-all group cursor-pointer text-white active:scale-[0.98]">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#25D366] rounded-full flex items-center justify-center text-xl sm:text-2xl shadow-[0_0_15px_rgba(37,211,102,0.4)] group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fab fa-whatsapp text-white"></i>
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <p class="text-xs sm:text-sm text-gray-400 font-medium mb-0.5">Chat WhatsApp</p>
+                                    <p class="font-bold text-base sm:text-lg tracking-wide">082-230652727</p>
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                            </a>
 
-                                <div class="flex items-center p-4 bg-black/20 rounded-xl border border-white/5 text-white">
-                                    <div class="w-12 h-12 bg-lekker-card rounded-full flex items-center justify-center text-xl text-lekker-main border border-lekker-main/50">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                    </div>
-                                    <div class="ml-4">
-                                        <p class="text-sm text-gray-400">Lokasi</p>
-                                        <p class="font-bold">Sorogenen, Samban, Bawen</p>
-                                    </div>
+                            <!-- Lokasi -->
+                            <div class="flex items-center p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/5 text-white">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-lekker-card rounded-full flex items-center justify-center text-xl sm:text-2xl text-lekker-main shadow-inner">
+                                    <i class="fas fa-map-marker-alt animate-bounce" style="animation-duration: 2s;"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-xs sm:text-sm text-gray-400 font-medium mb-0.5">Lokasi Outlet</p>
+                                    <p class="font-bold text-sm sm:text-base">Sorogenen, Samban, Bawen</p>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Map/Image Area -->
+                    <div class="lg:w-1/2 min-h-[250px] sm:min-h-[350px] relative order-1 lg:order-2 overflow-hidden bg-black/60">
+                        <!-- Pseudo Overlay Gradient for smooth blending -->
+                        <div class="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-lekker-bg/80 via-transparent to-transparent z-10 pointer-events-none"></div>
                         
-                        <!-- Map/Image Area -->
-                        <div class="md:w-1/2 min-h-[300px] relative bg-black/40">
-                            <!-- Ganti src map ini dengan link foto outlet atau gmaps iframe jika punya -->
-                            <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Suasana Outlet" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay">
-                            <div class="absolute inset-0 flex items-center justify-center p-6 text-center flex-col">
-                                <i class="fas fa-utensils text-5xl text-lekker-main mb-4 drop-shadow-lg"></i>
-                                <h3 class="text-2xl font-bold text-white drop-shadow-md">Dibuat dengan Sepenuh Hati</h3>
-                                <p class="text-orange-200 mt-2 font-medium">Buka Setiap Hari</p>
+                        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Suasana Outlet" class="absolute inset-0 w-full h-full object-cover opacity-50 transform transition duration-1000 hover:scale-110">
+                        
+                        <div class="absolute inset-0 flex items-center justify-center p-6 text-center flex-col z-20">
+                            <div class="bg-black/40 backdrop-blur-sm p-6 sm:p-8 rounded-full border border-white/10 flex flex-col items-center">
+                                <i class="fas fa-utensils text-4xl sm:text-5xl text-lekker-main mb-3 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"></i>
+                                <h3 class="text-xl sm:text-2xl font-bold text-white drop-shadow-md">Dibuat Fresh</h3>
+                                <p class="text-lekker-main/90 mt-1 text-sm sm:text-base font-medium tracking-wider">Setiap Hari</p>
                             </div>
                         </div>
                     </div>
@@ -256,83 +298,81 @@
         </section>
     </main>
 
-    <footer class="bg-black/80 pt-12 pb-8 border-t-2 border-lekker-main">
+    <footer class="bg-black/90 pt-12 pb-10 border-t border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center">
-                <img src="https://i.imgur.com/a3G88fY.png" alt="Logo" class="w-10 h-10 rounded-full mr-3 border-2 border-lekker-main bg-white">
+            <div class="flex items-center group cursor-pointer" onclick="window.scrollTo(0,0)">
+                <img src="https://i.imgur.com/a3G88fY.png" alt="Logo" class="w-10 h-10 rounded-full mr-3 border-2 border-lekker-main bg-white transition-transform group-hover:rotate-12">
                 <span class="font-brand text-2xl text-lekker-main">Chef Lekker Putar</span>
             </div>
             
             <div class="flex space-x-6 text-2xl">
-                <a href="#" class="text-gray-400 hover:text-[#E1306C] transition-colors transform hover:scale-110"><i class="fab fa-instagram"></i></a>
-                <a href="https://wa.me/6282230652727" class="text-gray-400 hover:text-[#25D366] transition-colors transform hover:scale-110"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="text-gray-400 hover:text-[#E1306C] transition-all transform hover:-translate-y-1 hover:scale-110"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/6282230652727" class="text-gray-400 hover:text-[#25D366] transition-all transform hover:-translate-y-1 hover:scale-110"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 text-center border-t border-gray-800 pt-6">
-            <p class="text-gray-500 text-sm">
-                &copy; 2026 UMKM Sorogenen Samban, Bawen. Support Local Business!
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 text-center border-t border-white/10 pt-6">
+            <p class="text-gray-500 text-xs sm:text-sm font-medium">
+                &copy; 2026 UMKM Sorogenen Samban, Bawen. Dibuat dengan ❤️
             </p>
         </div>
     </footer>
 
-    <!-- Sidebar Keranjang -->
+    <!-- Sidebar Keranjang (Mobile Optimized) -->
     <div id="cart-sidebar" class="fixed inset-0 overflow-hidden z-[100] hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
         <div class="absolute inset-0 overflow-hidden">
             <!-- Background overlay -->
-            <div id="cart-overlay" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true" onclick="toggleCart()"></div>
+            <div id="cart-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" aria-hidden="true" onclick="toggleCart()"></div>
 
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-0 sm:pl-10">
                 <!-- Slide-over panel -->
-                <div id="cart-panel" class="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-full">
-                    <div class="flex h-full flex-col bg-lekker-bg shadow-2xl border-l-4 border-lekker-main">
+                <div id="cart-panel" class="pointer-events-auto w-screen max-w-md transform transition ease-out duration-300 translate-x-full">
+                    <div class="flex h-full flex-col bg-lekker-bg shadow-2xl sm:border-l sm:border-white/10">
                         
                         <!-- Cart Header -->
-                        <div class="flex items-center justify-between px-4 py-6 sm:px-6 bg-lekker-card border-b border-yellow-900/50">
-                            <h2 class="text-xl font-bold text-lekker-main flex items-center font-brand tracking-wider" id="slide-over-title">
-                                <i class="fas fa-shopping-basket mr-3 text-2xl text-lekker-accent"></i> Pesananmu
+                        <div class="flex items-center justify-between px-4 py-5 sm:px-6 bg-lekker-card/80 backdrop-blur-md border-b border-white/5">
+                            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center tracking-wide" id="slide-over-title">
+                                <div class="bg-lekker-main/20 p-2 rounded-lg mr-3">
+                                    <i class="fas fa-shopping-basket text-lekker-main"></i>
+                                </div>
+                                Keranjang
                             </h2>
-                            <div class="ml-3 flex h-7 items-center">
-                                <button type="button" onclick="toggleCart()" class="relative -m-2 p-2 text-orange-200 hover:text-white hover:bg-white/10 rounded-full transition-colors">
-                                    <span class="absolute -inset-0.5"></span>
-                                    <i class="fas fa-times text-xl"></i>
-                                </button>
-                            </div>
+                            <button type="button" onclick="toggleCart()" class="p-2 -mr-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors active:scale-95 focus:outline-none">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
                         </div>
 
                         <!-- Cart Items -->
-                        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6" id="cart-items-container">
-                            <div id="empty-cart-msg" class="text-center text-orange-200/50 mt-16">
-                                <i class="fas fa-box-open text-6xl mb-4"></i>
-                                <p class="text-lg font-medium">Keranjang masih kosong</p>
-                                <p class="text-sm mt-1">Yuk tambahin lekker kesukaanmu!</p>
+                        <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6 scroll-smooth" id="cart-items-container">
+                            <div id="empty-cart-msg" class="text-center text-orange-200/40 mt-16 sm:mt-24 flex flex-col items-center">
+                                <i class="fas fa-box-open text-5xl sm:text-6xl mb-4 animate-float"></i>
+                                <p class="text-base sm:text-lg font-medium text-orange-200/60">Keranjang masih kosong</p>
+                                <p class="text-xs sm:text-sm mt-1">Yuk tambahin lekker kesukaanmu!</p>
                             </div>
-                            <ul role="list" class="-my-6 divide-y divide-yellow-900/30" id="cart-list">
+                            <ul role="list" class="-my-4 divide-y divide-white/5" id="cart-list">
                                 <!-- JS Injected List Items -->
                             </ul>
                         </div>
 
                         <!-- Cart Footer (Checkout) -->
-                        <div class="border-t border-yellow-900/50 px-4 py-6 sm:px-6 bg-lekker-card">
-                            <div class="flex justify-between text-lg font-bold text-white mb-2 bg-black/20 p-3 rounded-lg border border-white/5">
+                        <div class="border-t border-white/10 px-4 py-5 sm:px-6 bg-lekker-card/90 backdrop-blur-md pb-6 sm:pb-6">
+                            <div class="flex justify-between items-center text-base sm:text-lg font-bold text-white mb-4 bg-black/30 p-3 sm:p-4 rounded-xl border border-white/5">
                                 <p>Total Estimasi</p>
-                                <p id="cart-total" class="text-lekker-main">Rp 0</p>
+                                <p id="cart-total" class="text-lekker-main text-xl">Rp 0</p>
                             </div>
                             
                             <!-- Form Data Pemesan -->
-                            <div class="mt-6 space-y-4">
+                            <div class="mt-2 space-y-3">
                                 <div>
-                                    <label class="block text-sm font-medium text-orange-200 mb-1">Nama / Atas Nama</label>
-                                    <input type="text" id="cust-name" class="block w-full rounded-lg border border-yellow-700/50 bg-lekker-bg text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3 outline-none" placeholder="Masukkan nama...">
+                                    <input type="text" id="cust-name" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors" placeholder="Nama Pemesan (Wajib)">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-orange-200 mb-1">Catatan Tambahan</label>
-                                    <textarea id="cust-note" rows="2" class="block w-full rounded-lg border border-yellow-700/50 bg-lekker-bg text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3 outline-none resize-none" placeholder="Contoh: Garing banget ya, pedes, dll..."></textarea>
+                                    <textarea id="cust-note" rows="2" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none resize-none text-sm placeholder-gray-500 transition-colors" placeholder="Catatan: (Garing, pisah bungkus, dll...)"></textarea>
                                 </div>
                             </div>
 
-                            <div class="mt-6">
-                                <button onclick="checkoutWhatsApp()" class="group flex w-full items-center justify-center rounded-xl border border-transparent bg-[#25D366] px-6 py-4 text-lg font-bold text-white shadow-[0_4px_20px_0_rgba(37,211,102,0.4)] hover:bg-[#20b858] transition-all transform hover:-translate-y-1">
-                                    <i class="fab fa-whatsapp mr-2 text-2xl group-hover:animate-bounce"></i> Kirim Pesanan via WA
+                            <div class="mt-5">
+                                <button onclick="checkoutWhatsApp()" class="group flex w-full items-center justify-center rounded-xl border border-transparent bg-[#25D366] px-6 py-4 text-base sm:text-lg font-bold text-white shadow-[0_4px_15px_0_rgba(37,211,102,0.3)] hover:bg-[#20b858] transition-all transform hover:-translate-y-1 active:scale-[0.98]">
+                                    <i class="fab fa-whatsapp mr-2 text-xl group-hover:scale-125 transition-transform"></i> Pesan via WA
                                 </button>
                             </div>
                         </div>
@@ -346,67 +386,58 @@
     <div id="toast">Notifikasi</div>
 
     <script>
-        // Data Menu UMKM Sorogenen berdasarkan Poster Klien
-        // Ganti link imgUrl dengan foto makanan asli jika sudah ada di Imgur
+        // Data Menu
         const menuData = [
-            { id: 1, name: 'CokMeSu', fullName: 'Coklat Meises Susu', price: 2000, desc: 'Lekker klasik dengan isian paduan meises coklat dan susu manis.', imgUrl: 'https://i.imgur.com/gpIcb81.png' },
-            { id: 2, name: 'PisCok', fullName: 'Pisang Coklat', price: 3000, desc: 'Irisan pisang legit dibalut coklat hangat yang lumer.', imgUrl: 'https://i.imgur.com/vGPDgXE.png' },
-            { id: 3, name: 'PisCokKeju', fullName: 'Pisang Coklat Keju', price: 4000, desc: 'Kombinasi juara! Pisang, coklat manis, dan gurihnya keju parut.', imgUrl: 'https://i.imgur.com/Q758KEH.png' },
-            { id: 4, name: 'PisKeSu', fullName: 'Pisang Keju Susu', price: 5000, desc: 'Pisang manis, keju melimpah, disiram susu kental manis.', imgUrl: 'https://i.imgur.com/Mujstrf.png' },
-            { id: 5, name: 'CocoGorMas', fullName: 'Choco Gorilla Marshmallow', price: 5000, desc: 'Sensasi kekinian marshmallow lembut dengan coklat spesial.', imgUrl: 'https://i.imgur.com/0a1nHPG.png' },
-            { id: 6, name: 'Spesial', fullName: 'Lekker Spesial Komplit', price: 7000, desc: 'Isian komplit dan tebal, puas untuk si paling lapar!', imgUrl: 'https://i.imgur.com/OtYFTcm.png' }
+            { id: 1, name: 'CokMeSu', fullName: 'Coklat Meises Susu', price: 2000, desc: 'Lekker klasik dengan isian meises coklat & susu manis.', imgUrl: 'https://i.imgur.com/gpIcb81.png' },
+            { id: 2, name: 'PisCok', fullName: 'Pisang Coklat', price: 3000, desc: 'Irisan pisang legit dibalut coklat lumer hangat.', imgUrl: 'https://i.imgur.com/vGPDgXE.png' },
+            { id: 3, name: 'PisCokKeju', fullName: 'Pisang Coklat Keju', price: 4000, desc: 'Kombinasi juara! Pisang, coklat manis, & keju gurih.', imgUrl: 'https://i.imgur.com/Q758KEH.png' },
+            { id: 4, name: 'PisKeSu', fullName: 'Pisang Keju Susu', price: 5000, desc: 'Pisang manis, keju melimpah, disiram susu kental.', imgUrl: 'https://i.imgur.com/Mujstrf.png' },
+            { id: 5, name: 'CocoGorMas', fullName: 'Choco Gorilla Marshmallow', price: 5000, desc: 'Sensasi kekinian marshmallow lembut dengan coklat.', imgUrl: 'https://i.imgur.com/0a1nHPG.png' },
+            { id: 6, name: 'Spesial', fullName: 'Lekker Spesial Komplit', price: 7000, desc: 'Isian komplit dan tebal, puas untuk si lapar!', imgUrl: 'https://i.imgur.com/OtYFTcm.png' }
         ];
 
-        // State Keranjang
         let cart = [];
 
-        // Formatting harga Rupiah
         const formatRupiah = (number) => {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
         };
 
-        // Render Menu dengan Gaya Polaroid dari Poster
         function renderMenu() {
             const container = document.getElementById('menu-container');
             container.innerHTML = '';
 
             menuData.forEach((item, index) => {
                 const card = document.createElement('div');
-                // Tambahkan class delay untuk animasi masuk bertahap
-                const delayClasses = ['delay-100', 'delay-200', 'delay-300', 'delay-100', 'delay-200', 'delay-300'];
-                card.className = `reveal ${delayClasses[index % 6]} h-full`;
+                card.className = `reveal h-full`;
+                // Add staggered inline style delay so they don't pop all at once
+                card.style.animationDelay = `${(index % 3) * 0.15}s`;
                 
-                // Menghitung harga 'k' untuk badge oranye seperti di poster (misal: 5000 -> 5k)
                 const priceK = (item.price / 1000) + 'k';
 
                 card.innerHTML = `
-                    <div class="relative bg-[#fdf3e7] p-3 rounded-xl shadow-xl group transform transition duration-500 hover:-translate-y-3 hover:shadow-2xl hover:rotate-1 flex flex-col h-full border border-gray-200">
-                        <!-- Frame Foto Polaroid -->
-                        <div class="overflow-hidden rounded-lg relative bg-lekker-card aspect-[4/3]">
-                            <img src="${item.imgUrl}" alt="${item.fullName}" class="w-full h-full object-cover transform transition duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100">
+                    <div class="relative bg-[#fdf3e7] p-2.5 sm:p-3 rounded-2xl shadow-lg group transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:rotate-1 flex flex-col h-full border border-gray-200">
+                        
+                        <div class="overflow-hidden rounded-xl relative bg-lekker-card aspect-[4/3]">
+                            <img src="${item.imgUrl}" alt="${item.fullName}" class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110 opacity-95 group-hover:opacity-100" loading="lazy">
                             
-                            <!-- Lingkaran Harga Oranye (Ala Poster) -->
-                            <div class="absolute bottom-2 right-2 bg-lekker-price text-white w-12 h-12 rounded-full flex items-center justify-center font-extrabold border-2 border-white shadow-lg text-lg z-10 transform group-hover:scale-110 transition-transform">
+                            <div class="absolute bottom-2 right-2 bg-lekker-price text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-extrabold border-2 border-white shadow-md text-sm sm:text-base z-10 transform group-hover:scale-110 group-hover:rotate-12 transition-all">
                                 ${priceK}
                             </div>
                             
-                            <!-- Pita Nama Menu -->
-                            <div class="absolute bottom-4 -left-2 bg-lekker-card text-white px-4 py-1.5 border-y-2 border-r-2 border-white shadow-md rounded-r-lg max-w-[85%]">
-                                <span class="font-bold block truncate drop-shadow-md tracking-wide text-sm sm:text-base">${item.name}</span>
+                            <div class="absolute bottom-3 sm:bottom-4 -left-2 bg-lekker-card text-white px-3 sm:px-4 py-1.5 border-y-2 border-r-2 border-white shadow-md rounded-r-lg max-w-[85%] transition-transform group-hover:translate-x-1">
+                                <span class="font-bold block truncate drop-shadow-md tracking-wide text-xs sm:text-sm">${item.name}</span>
                             </div>
                         </div>
                         
-                        <!-- Area Deskripsi & Tombol Beli -->
-                        <div class="pt-5 pb-2 px-2 text-center flex-1 flex flex-col justify-between">
-                            <p class="text-xs text-gray-600 mb-4 font-medium leading-relaxed">${item.desc}</p>
+                        <div class="pt-4 pb-2 px-2 text-center flex-1 flex flex-col justify-between">
+                            <p class="text-[11px] sm:text-xs text-gray-600 mb-4 font-medium leading-relaxed px-1">${item.desc}</p>
                             
-                            <button onclick="addToCart(${item.id})" class="w-full bg-lekker-card hover:bg-[#2d1b11] text-lekker-main py-2.5 rounded-full font-bold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lekker-card shadow-md flex justify-center items-center gap-2 group-hover:bg-lekker-main group-hover:text-lekker-bg group-hover:shadow-[0_0_15px_rgba(251,191,36,0.5)]">
-                                <i class="fas fa-cart-plus"></i> <span class="text-sm">Pesan (${formatRupiah(item.price)})</span>
+                            <button onclick="addToCart(${item.id})" class="w-full bg-lekker-card hover:bg-[#2d1b11] text-lekker-main py-2.5 sm:py-3 rounded-xl font-bold transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lekker-card shadow-sm flex justify-center items-center gap-2 group-hover:bg-lekker-main group-hover:text-lekker-bg active:scale-95">
+                                <i class="fas fa-cart-plus text-sm sm:text-base"></i> <span class="text-xs sm:text-sm">Tambah</span>
                             </button>
                         </div>
                         
-                        <!-- Selotip Ornamen Polaroid -->
-                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-sm shadow-sm rotate-[-3deg] z-20" style="clip-path: polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%);"></div>
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 w-14 h-5 sm:w-16 sm:h-6 bg-white/50 backdrop-blur-md shadow-sm rotate-[-3deg] z-20 rounded-sm border border-white/20" style="clip-path: polygon(2% 0%, 98% 0%, 100% 100%, 0% 100%);"></div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -425,14 +456,14 @@
             }
 
             updateCartUI();
-            showToast(`${item.name} ditambahkan ke keranjang!`);
+            showToast(`${item.name} ditambahkan!`);
             
-            // Animasi kecil di tombol cart desktop & mobile
+            // Subtle bounce animation for cart icons
             const cartBtns = document.querySelectorAll('.fa-shopping-cart');
             cartBtns.forEach(btn => {
                 const parent = btn.parentElement;
                 parent.classList.add('scale-125', 'text-lekker-main');
-                setTimeout(() => parent.classList.remove('scale-125', 'text-lekker-main'), 300);
+                setTimeout(() => parent.classList.remove('scale-125', 'text-lekker-main'), 200);
             });
         }
 
@@ -453,7 +484,6 @@
         }
 
         function updateCartUI() {
-            // Update Badges
             const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
             
             const badgeDesktop = document.getElementById('cart-count-desktop');
@@ -469,40 +499,39 @@
                 badgeMobile.classList.add('hidden');
             }
 
-            // Update Cart List
             const cartList = document.getElementById('cart-list');
             const emptyMsg = document.getElementById('empty-cart-msg');
             
             cartList.innerHTML = '';
             
             if (cart.length === 0) {
-                emptyMsg.style.display = 'block';
+                emptyMsg.style.display = 'flex';
             } else {
                 emptyMsg.style.display = 'none';
                 
                 cart.forEach(item => {
                     const li = document.createElement('li');
-                    li.className = 'flex py-5';
+                    li.className = 'flex py-4 sm:py-5 transform transition-all duration-300';
                     li.innerHTML = `
-                        <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border-2 border-lekker-card bg-black">
+                        <div class="h-16 w-16 sm:h-20 sm:w-20 flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-black">
                             <img src="${item.imgUrl}" alt="${item.name}" class="h-full w-full object-cover">
                         </div>
-                        <div class="ml-4 flex flex-1 flex-col justify-between">
+                        <div class="ml-3 sm:ml-4 flex flex-1 flex-col justify-between">
                             <div>
-                                <div class="flex justify-between text-base font-bold text-white">
+                                <div class="flex justify-between text-sm sm:text-base font-bold text-white mb-1">
                                     <h3 class="line-clamp-1">${item.name}</h3>
-                                    <p class="ml-4 text-lekker-main whitespace-nowrap">${formatRupiah(item.price * item.qty)}</p>
+                                    <p class="ml-2 text-lekker-main whitespace-nowrap">${formatRupiah(item.price * item.qty)}</p>
                                 </div>
-                                <p class="mt-1 text-xs text-orange-200/70">${formatRupiah(item.price)} / porsi</p>
+                                <p class="text-[10px] sm:text-xs text-orange-200/60 font-medium">${formatRupiah(item.price)} / porsi</p>
                             </div>
                             <div class="flex flex-1 items-end justify-between text-sm mt-2">
-                                <div class="flex items-center border border-yellow-700/50 rounded-lg bg-lekker-card">
-                                    <button onclick="updateItemQty(${item.id}, -1)" class="px-3 py-1 text-white hover:bg-lekker-main hover:text-lekker-bg rounded-l-lg transition-colors font-bold">-</button>
-                                    <span class="px-3 font-bold text-white min-w-[2rem] text-center">${item.qty}</span>
-                                    <button onclick="updateItemQty(${item.id}, 1)" class="px-3 py-1 text-white hover:bg-lekker-main hover:text-lekker-bg rounded-r-lg transition-colors font-bold">+</button>
+                                <div class="flex items-center border border-white/10 rounded-lg bg-black/40">
+                                    <button onclick="updateItemQty(${item.id}, -1)" class="px-2 sm:px-3 py-1 text-white hover:bg-white/10 rounded-l-lg transition-colors font-bold active:scale-95">-</button>
+                                    <span class="px-2 sm:px-3 font-bold text-white min-w-[1.5rem] sm:min-w-[2rem] text-center text-xs sm:text-sm">${item.qty}</span>
+                                    <button onclick="updateItemQty(${item.id}, 1)" class="px-2 sm:px-3 py-1 text-white hover:bg-white/10 rounded-r-lg transition-colors font-bold active:scale-95">+</button>
                                 </div>
-                                <button type="button" onclick="removeFromCart(${item.id})" class="font-medium text-red-400 hover:text-red-300 transition-colors flex items-center text-xs bg-red-400/10 px-2 py-1.5 rounded-md">
-                                    <i class="fas fa-trash-alt mr-1"></i> Hapus
+                                <button type="button" onclick="removeFromCart(${item.id})" class="font-medium text-red-400 hover:text-red-300 transition-colors flex items-center text-[10px] sm:text-xs bg-red-400/10 px-2 py-1.5 rounded-md active:scale-95">
+                                    <i class="fas fa-trash-alt sm:mr-1"></i> <span class="hidden sm:inline">Hapus</span>
                                 </button>
                             </div>
                         </div>
@@ -511,15 +540,33 @@
                 });
             }
 
-            // Update Total
             const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('cart-total').textContent = formatRupiah(total);
         }
 
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                // Small trick to allow transition to play
+                setTimeout(() => {
+                    menu.style.transform = 'scaleY(1)';
+                    menu.style.opacity = '1';
+                }, 10);
+            } else {
+                menu.style.transform = 'scaleY(0)';
+                menu.style.opacity = '0';
+                setTimeout(() => menu.classList.add('hidden'), 300);
+            }
         }
+
+        // Initialize mobile menu state
+        document.addEventListener("DOMContentLoaded", () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.style.transform = 'scaleY(0)';
+            menu.style.opacity = '0';
+            menu.style.transformOrigin = 'top';
+        });
 
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
@@ -528,36 +575,37 @@
 
             if (sidebar.classList.contains('hidden')) {
                 sidebar.classList.remove('hidden');
-                setTimeout(() => {
-                    overlay.classList.remove('opacity-0');
-                    overlay.classList.add('opacity-100');
-                    panel.classList.remove('translate-x-full');
-                    panel.classList.add('translate-x-0');
-                }, 10);
+                // Force reflow
+                void sidebar.offsetWidth;
+                overlay.classList.remove('opacity-0');
+                overlay.classList.add('opacity-100');
+                panel.classList.remove('translate-x-full');
+                panel.classList.add('translate-x-0');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
             } else {
                 overlay.classList.remove('opacity-100');
                 overlay.classList.add('opacity-0');
                 panel.classList.remove('translate-x-0');
                 panel.classList.add('translate-x-full');
+                document.body.style.overflow = '';
                 setTimeout(() => {
                     sidebar.classList.add('hidden');
-                }, 500); 
+                }, 300); 
             }
         }
 
         function showToast(message) {
             const toast = document.getElementById('toast');
-            toast.innerHTML = `<i class="fas fa-check-circle mr-2 text-green-400"></i> ${message}`;
+            toast.innerHTML = `<i class="fas fa-check-circle mr-2 text-[#25D366]"></i> ${message}`;
             toast.className = 'show';
             setTimeout(() => {
                 toast.className = toast.className.replace('show', '');
             }, 3000);
         }
 
-        // WhatsApp Checkout
         function checkoutWhatsApp() {
             if (cart.length === 0) {
-                showToast("Keranjang masih kosong!");
+                showToast("Keranjang masih kosong nih!");
                 return;
             }
 
@@ -565,17 +613,16 @@
             const custNote = document.getElementById('cust-note').value.trim();
 
             if(!custName) {
-                showToast("Mohon isi Nama Anda terlebih dahulu.");
+                showToast("Tulis nama kamu dulu ya.");
                 document.getElementById('cust-name').focus();
                 return;
             }
 
-            // Nomor dari poster: 082-230652727 diubah ke format internasional 62
             const phone = "6282230652727"; 
             
             let message = `Halo *CHEF LEKKER PUTAR*! 👋\nSaya mau pesan lekker:\n\n`;
             
-            cart.forEach((item, index) => {
+            cart.forEach((item) => {
                 message += `▪️ *${item.name}* (${item.qty}x) = ${formatRupiah(item.price * item.qty)}\n`;
             });
             
@@ -584,10 +631,10 @@
             message += `\n=====================\n`;
             message += `💰 *TOTAL: ${formatRupiah(total)}*\n`;
             message += `=====================\n\n`;
-            message += `👤 *Atas Nama:* ${custName}\n`;
+            message += `👤 *Nama:* ${custName}\n`;
             if(custNote) message += `📝 *Catatan:* ${custNote}\n`;
             
-            message += `\nTerima kasih! Ditunggu lekker garingnya. 🙏`;
+            message += `\nTerima kasih! Ditunggu lekker garingnya! 🙏`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
@@ -595,40 +642,43 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // --- Scroll Animations (Intersection Observer) ---
-        function reveal() {
-            var reveals = document.querySelectorAll(".reveal");
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var elementTop = reveals[i].getBoundingClientRect().top;
-                var elementVisible = 100;
-                
-                if (elementTop < windowHeight - elementVisible) {
-                    reveals[i].classList.add("active");
-                }
-            }
-        }
+        // --- Optimized Scroll Animations (Intersection Observer) ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
 
-        // Initialize App
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Trigger the animation class configured in tailwind config
+                    entry.target.classList.add('animate-slide-up');
+                    entry.target.classList.remove('opacity-0');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
         window.onload = () => {
             renderMenu();
-            reveal(); // Trigger reveal on load
+            
+            // Observe reveal elements
+            document.querySelectorAll('.reveal').forEach((el) => {
+                observer.observe(el);
+            });
         };
 
         window.addEventListener('scroll', () => {
-            // Navbar effect
             const nav = document.getElementById('navbar');
             if (window.scrollY > 10) {
-                nav.classList.add('shadow-2xl', 'bg-lekker-bg');
-                nav.classList.remove('bg-lekker-bg/95');
+                nav.classList.add('bg-lekker-bg/95', 'shadow-2xl');
+                nav.classList.remove('bg-lekker-bg/90');
             } else {
-                nav.classList.remove('shadow-2xl', 'bg-lekker-bg');
-                nav.classList.add('bg-lekker-bg/95');
+                nav.classList.remove('bg-lekker-bg/95', 'shadow-2xl');
+                nav.classList.add('bg-lekker-bg/90');
             }
-            
-            // Trigger animation on scroll
-            reveal();
-        });
+        }, { passive: true });
 
     </script>
 </body>
