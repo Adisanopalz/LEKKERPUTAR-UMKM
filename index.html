@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>CHEF LEKKER PUTAR - Asli Sorogenen Bawen</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,12 +14,12 @@
                 extend: {
                     colors: {
                         lekker: {
-                            bg: '#2d1b11',      // Dark Chocolate background
-                            card: '#422818',    // Lighter Brown for elements
-                            main: '#FBBF24',    // Bright Yellow (from poster title)
-                            accent: '#F59E0B',  // Amber/Orange
-                            price: '#d95a2b',   // Orange Red (from poster price tag)
-                            text: '#fdf3e7'     // Warm white for text
+                            bg: '#2d1b11',
+                            card: '#422818',
+                            main: '#FBBF24',
+                            accent: '#F59E0B',
+                            price: '#d95a2b',
+                            text: '#fdf3e7'
                         }
                     },
                     fontFamily: {
@@ -32,6 +32,7 @@
                         'blob': 'blob 7s infinite',
                         'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                         'marquee': 'marquee 25s linear infinite',
+                        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
                     },
                     keyframes: {
                         float: {
@@ -65,6 +66,12 @@
             background-image: radial-gradient(#422818 1.5px, transparent 1.5px);
             background-size: 24px 24px;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru di mobile saat di-tap */
+        }
+
+        /* Anti Ghost Touch / Tap Delay Fix untuk Mobile */
+        button, a, input, textarea {
+            touch-action: manipulation;
         }
         
         .putar-anim {
@@ -91,7 +98,7 @@
             border: 2px solid #FBBF24;
             padding: 12px 20px;
             position: fixed;
-            z-index: 1000;
+            z-index: 9999;
             left: 50%;
             bottom: 30px;
             font-size: 14px;
@@ -120,11 +127,17 @@
             transition: max-height 0.3s ease-out, padding 0.3s ease;
         }
         .faq-item.active .faq-content {
-            max-height: 200px; /* arbitrary max height */
+            max-height: 200px;
             padding-bottom: 1rem;
         }
         .faq-item.active .faq-icon {
             transform: rotate(180deg);
+        }
+
+        /* Game specific styles */
+        .game-btn-active {
+            transform: scale(0.9);
+            filter: brightness(1.2);
         }
     </style>
 </head>
@@ -147,12 +160,12 @@
                 </div>
 
                 <!-- Desktop Menu -->
-                <div class="hidden md:flex space-x-6 lg:space-x-8 items-center">
+                <div class="hidden md:flex space-x-5 lg:space-x-8 items-center">
                     <a href="#beranda" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Beranda</a>
                     <a href="#menu" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Menu</a>
-                    <a href="#racik" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Racik Topping</a>
-                    <a href="#testimoni" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Kata Bestie</a>
-                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Lokasi & FAQ</a>
+                    <a href="#racik" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Racik</a>
+                    <a href="#game-section" class="text-lekker-main hover:text-white transition-colors font-bold text-sm lg:text-base flex items-center gap-1 animate-pulse"><i class="fas fa-gamepad"></i> Game</a>
+                    <a href="#tentang" class="text-orange-100 hover:text-lekker-main transition-colors font-medium text-sm lg:text-base">Info</a>
                     
                     <button onclick="toggleCart()" class="relative p-2 text-orange-100 hover:text-lekker-main transition-transform transform hover:scale-110 active:scale-95 bg-white/5 rounded-full">
                         <i class="fas fa-shopping-cart text-xl relative z-10"></i>
@@ -162,24 +175,24 @@
 
                 <!-- Mobile Menu Icons -->
                 <div class="md:hidden flex items-center gap-3">
-                    <button onclick="toggleCart()" class="relative p-2 text-lekker-main hover:text-white transition-colors focus:outline-none bg-white/5 rounded-full">
+                    <button onclick="toggleCart()" class="relative p-2 text-lekker-main hover:text-white transition-colors focus:outline-none bg-white/5 rounded-full active:bg-white/20">
                         <i class="fas fa-shopping-cart text-xl"></i>
                         <span id="cart-count-mobile-nav" class="absolute top-0 right-0 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold leading-none text-lekker-bg transform translate-x-1/4 -translate-y-1/4 bg-lekker-main rounded-full hidden shadow-sm">0</span>
                     </button>
-                    <button onclick="toggleMobileMenu()" class="text-orange-100 hover:text-lekker-main focus:outline-none p-1">
+                    <button onclick="toggleMobileMenu()" class="text-orange-100 hover:text-lekker-main focus:outline-none p-1 active:scale-90 transition-transform">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
         
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="md:hidden hidden bg-lekker-card/95 backdrop-blur-md border-t border-yellow-900/50 absolute w-full shadow-2xl origin-top transition-all duration-300">
+        <!-- Mobile Menu Dropdown (Improved Anti-Bug Toggle) -->
+        <div id="mobile-menu" class="md:hidden fixed top-16 left-0 w-full bg-lekker-card/95 backdrop-blur-xl border-t border-yellow-900/50 shadow-2xl transition-all duration-300 transform -translate-y-full opacity-0 pointer-events-none z-40">
             <div class="px-4 pt-3 pb-5 space-y-2">
                 <a href="#beranda" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Beranda</a>
                 <a href="#menu" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Menu Favorit</a>
-                <a href="#racik" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Racik Topping (Custom)</a>
-                <a href="#testimoni" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Kata Bestie</a>
+                <a href="#racik" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Racik Topping</a>
+                <a href="#game-section" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-bold text-lekker-main hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">🎮 Main Game Berhadiah</a>
                 <a href="#tentang" onclick="toggleMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-orange-100 hover:text-lekker-bg hover:bg-lekker-main transition-all active:scale-[0.98]">Lokasi & FAQ</a>
             </div>
         </div>
@@ -188,13 +201,10 @@
     <main class="pt-16 md:pt-20">
         <!-- Beranda Section -->
         <section id="beranda" class="relative overflow-hidden py-12 md:py-16 lg:py-24">
-            <!-- Animated Decorative Blobs -->
             <div class="absolute top-0 left-0 w-64 h-64 bg-yellow-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob"></div>
             <div class="absolute top-0 right-0 w-64 h-64 bg-orange-600/10 rounded-full mix-blend-screen filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-14 relative z-10">
-                
-                <!-- Text Content -->
                 <div class="w-full md:w-1/2 text-center md:text-left reveal mt-4 md:mt-0 order-2 md:order-1">
                     <div class="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-lekker-card/80 border border-lekker-main/30 text-lekker-main text-xs md:text-sm font-bold mb-6 shadow-sm backdrop-blur-sm animate-bounce" style="animation-duration: 3s;">
                         <i class="fas fa-fire text-lekker-price"></i> VIRAL DI BAWEN!
@@ -217,7 +227,6 @@
                     </div>
                 </div>
                 
-                <!-- Hero Image -->
                 <div class="w-full md:w-1/2 flex justify-center md:justify-end relative order-1 md:order-2 pt-4 md:pt-0">
                     <i class="fas fa-sparkles absolute top-4 right-[10%] md:right-10 text-3xl md:text-4xl text-lekker-main animate-pulse z-20"></i>
                     <i class="fas fa-heart absolute bottom-10 left-[5%] md:left-0 text-xl md:text-3xl text-lekker-price animate-float z-20"></i>
@@ -227,8 +236,6 @@
                         <div class="relative w-full h-full rounded-full p-2 md:p-3 border-dashed border-[3px] md:border-4 border-lekker-main/70 bg-lekker-card/80 shadow-2xl flex items-center justify-center backdrop-blur-sm group overflow-hidden">
                             <img src="https://i.imgur.com/a3G88fY.png" alt="Chef Lekker" class="w-full h-full object-cover rounded-full shadow-inner bg-white transform transition duration-500 group-hover:scale-110">
                         </div>
-                        
-                        <!-- Floating badge -->
                         <div class="absolute -bottom-4 sm:-bottom-2 -right-4 sm:-right-2 bg-lekker-card border-2 border-lekker-main px-4 py-2 rounded-2xl shadow-xl transform rotate-6 animate-float-delayed z-30">
                             <p class="text-white font-bold text-xs sm:text-sm text-center">⭐ 4.9/5<br><span class="text-[10px] text-gray-400 font-normal">Rating Pelanggan</span></p>
                         </div>
@@ -237,17 +244,17 @@
             </div>
         </section>
 
-        <!-- Marquee / Teks Berjalan (Gen Z FOMO touch) -->
+        <!-- Marquee -->
         <div class="w-full bg-lekker-main text-lekker-bg py-2 overflow-hidden border-y border-yellow-500 flex relative z-10 shadow-[0_5px_15px_rgba(251,191,36,0.2)]">
             <div class="whitespace-nowrap animate-marquee font-bold text-sm sm:text-base flex items-center gap-10 min-w-[200%]">
                 <span>🔥 HOT PROMO: Gratis 1 Lekker Coklat tiap beli 5 pcs! 🔥</span>
                 <span>✨ Coba Menu Baru: Matcha Crunchy Keju! ✨</span>
+                <span>🎮 MAIN GAME DAPAT KODE PROMO! Scroll ke bawah! 🎮</span>
                 <span>🛵 Bisa diambil sendiri atau kirim via Kurir Lokal! 🛵</span>
-                <span>🤤 Lumer di mulut, garing di luar! Bikin nagih bestie. 🤤</span>
                 <span>🔥 HOT PROMO: Gratis 1 Lekker Coklat tiap beli 5 pcs! 🔥</span>
                 <span>✨ Coba Menu Baru: Matcha Crunchy Keju! ✨</span>
+                <span>🎮 MAIN GAME DAPAT KODE PROMO! Scroll ke bawah! 🎮</span>
                 <span>🛵 Bisa diambil sendiri atau kirim via Kurir Lokal! 🛵</span>
-                <span>🤤 Lumer di mulut, garing di luar! Bikin nagih bestie. 🤤</span>
             </div>
         </div>
 
@@ -260,14 +267,6 @@
                         Menu <span class="text-lekker-main font-brand font-normal">Favorit</span>
                     </h2>
                     <div class="w-16 md:w-24 h-1 bg-lekker-main/50 mx-auto rounded-full mb-6"></div>
-                    <p class="max-w-2xl text-sm md:text-base lg:text-lg text-orange-200/80 mx-auto px-4">Menu yang paling sering diborong warga. Jangan sampai kehabisan ya!</p>
-                </div>
-
-                <!-- Kategori Tabs (Visual only to make it look rich) -->
-                <div class="flex justify-center gap-3 mb-10 overflow-x-auto pb-4 scrollbar-hide px-2">
-                    <span class="px-5 py-2 rounded-full bg-lekker-main text-lekker-bg font-bold text-sm whitespace-nowrap shadow-md border border-lekker-main cursor-pointer">Semua Menu</span>
-                    <span class="px-5 py-2 rounded-full bg-black/40 text-gray-300 font-medium text-sm whitespace-nowrap border border-white/10 hover:bg-white/10 cursor-pointer transition-colors">Legend (Klasik)</span>
-                    <span class="px-5 py-2 rounded-full bg-black/40 text-gray-300 font-medium text-sm whitespace-nowrap border border-white/10 hover:bg-white/10 cursor-pointer transition-colors flex items-center gap-1"><i class="fas fa-crown text-lekker-main text-xs"></i> Kekinian</span>
                 </div>
 
                 <!-- Grid Menu -->
@@ -340,8 +339,61 @@
             </div>
         </section>
 
-        <!-- Testimoni / Social Proof Section (Gen Z Vibe) -->
+        <!-- MINI GAME SECTION (Fitur Baru) -->
+        <section id="game-section" class="py-16 bg-gradient-to-b from-[#1a0f09] to-[#2d1b11] border-y border-lekker-main/20 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <div class="reveal">
+                    <span class="inline-block bg-lekker-price text-white font-bold px-3 py-1 rounded-full text-xs mb-3 animate-pulse">GAMES ANTI BOSEN!</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Tap-Tap <span class="text-lekker-main font-brand font-normal">Lekker</span> 👆</h2>
+                    <p class="text-orange-200/80 text-sm md:text-base mb-8">Uji kecepatan jarimu! Tap gambar Lekker <strong>50 kali</strong> dalam <strong>10 detik</strong> untuk dapetin 🎁 KODE PROMO RAHASIA!</p>
+                </div>
+
+                <div class="bg-black/40 border border-white/10 rounded-[2rem] p-6 md:p-10 shadow-2xl reveal delay-100 max-w-lg mx-auto relative">
+                    
+                    <!-- Game Info Header -->
+                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl mb-8">
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Waktu</p>
+                            <p class="text-2xl font-extrabold text-white"><span id="game-time">10</span>s ⏳</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider font-bold text-right">Skor</p>
+                            <p class="text-2xl font-extrabold text-lekker-main"><span id="game-score">0</span> / 50</p>
+                        </div>
+                    </div>
+
+                    <!-- Giant Lekker Button -->
+                    <div class="relative w-48 h-48 sm:w-56 sm:h-56 mx-auto cursor-pointer flex items-center justify-center group" onclick="tapLekker(this)">
+                        <!-- Glow -->
+                        <div class="absolute inset-0 bg-lekker-main/30 rounded-full blur-xl group-hover:bg-lekker-main/50 transition-all duration-200 pointer-events-none"></div>
+                        <img src="https://i.imgur.com/a3G88fY.png" alt="Tap Lekker" id="game-lekker-img" class="relative w-full h-full object-cover rounded-full border-4 border-lekker-main shadow-[0_0_20px_rgba(251,191,36,0.6)] transform transition-transform duration-75 select-none" draggable="false">
+                        
+                        <!-- Floating Text Overlay -->
+                        <div id="start-game-overlay" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full pointer-events-none transition-opacity">
+                            <span class="text-white font-bold text-lg drop-shadow-md">TAP UNTUK MULAI!</span>
+                        </div>
+                    </div>
+
+                    <!-- Game Result Modal -->
+                    <div id="game-result" class="hidden mt-8 p-4 rounded-xl border border-dashed transition-all">
+                        <h4 id="game-result-title" class="text-xl font-bold mb-2"></h4>
+                        <p id="game-result-desc" class="text-sm text-gray-300 mb-3"></p>
+                        <div id="promo-code-box" class="hidden bg-black/50 p-3 rounded-lg border border-lekker-main text-lekker-main font-mono text-xl font-bold tracking-widest mb-4">
+                            LEKKERGEBOY
+                        </div>
+                        <button onclick="resetGame()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-full text-sm font-bold transition-all active:scale-95">Main Lagi</button>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Confetti Canvas (will just use CSS emojis for simplicity) -->
+            <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden z-0 hidden"></div>
+        </section>
+
+        <!-- Testimoni / Social Proof Section -->
         <section id="testimoni" class="py-16 bg-[#22130c] border-y border-white/5">
+            <!-- (Testimoni Content Sama Seperti Sebelumnya) -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10 reveal">
                     <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-2">Kata <span class="text-lekker-main font-brand font-normal">Bestie</span> 💬</h2>
@@ -349,7 +401,6 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal delay-100">
-                    <!-- Testi 1 -->
                     <div class="bg-lekker-card/50 p-6 rounded-2xl border border-white/5 shadow-lg relative">
                         <i class="fas fa-quote-right absolute top-4 right-4 text-3xl text-white/5"></i>
                         <div class="flex items-center gap-3 mb-4">
@@ -363,7 +414,6 @@
                         </div>
                         <p class="text-sm text-gray-300 italic">"Sumpah ini lekker paling garing yang pernah gue makan di Bawen! Pesen yang Pisang Coklat Keju, kejunya ga pelit samsek. Fix langganan!"</p>
                     </div>
-                    <!-- Testi 2 -->
                     <div class="bg-lekker-card/50 p-6 rounded-2xl border border-white/5 shadow-lg relative">
                         <i class="fas fa-quote-right absolute top-4 right-4 text-3xl text-white/5"></i>
                         <div class="flex items-center gap-3 mb-4">
@@ -377,7 +427,6 @@
                         </div>
                         <p class="text-sm text-gray-300 italic">"Harga anak kos banget, mulai 2 ribuan tapi rasanya premium. Gue cobain yang racik sendiri pake Smoked Beef + Mozza, melted parah bro 😭🔥"</p>
                     </div>
-                    <!-- Testi 3 -->
                     <div class="bg-lekker-card/50 p-6 rounded-2xl border border-white/5 shadow-lg relative md:hidden lg:block">
                         <i class="fas fa-quote-right absolute top-4 right-4 text-3xl text-white/5"></i>
                         <div class="flex items-center gap-3 mb-4">
@@ -402,7 +451,6 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-lekker-bg/80 backdrop-blur-lg rounded-[2rem] shadow-2xl overflow-hidden reveal border border-white/5 flex flex-col lg:flex-row mb-12">
                     
-                    <!-- Info Text Area -->
                     <div class="lg:w-1/2 p-8 sm:p-10 lg:p-14 flex flex-col justify-center order-2 lg:order-1">
                         <div class="inline-block bg-lekker-card/50 px-4 py-1.5 rounded-full text-xs font-bold text-orange-200 mb-4 w-max border border-white/5">SUPPORT UMKM LOKAL 🇮🇩</div>
                         <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white mb-6">
@@ -460,11 +508,10 @@
                     </div>
                 </div>
                 
-                <!-- FAQ Accordion untuk Awam -->
+                <!-- FAQ Accordion -->
                 <div class="max-w-3xl mx-auto reveal">
                     <h3 class="text-2xl font-bold text-center text-white mb-6">Pertanyaan Sering Muncul (FAQ) 🤔</h3>
                     <div class="space-y-3" id="faq-container">
-                        <!-- FAQ 1 -->
                         <div class="faq-item bg-lekker-bg border border-white/10 rounded-xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
                             <div class="p-4 flex justify-between items-center bg-white/5 hover:bg-white/10 transition-colors">
                                 <span class="font-bold text-sm sm:text-base text-orange-100">Bisa bayar pakai QRIS / Transfer?</span>
@@ -474,7 +521,6 @@
                                 <p class="pt-2">Tentu bisa! Kami menerima pembayaran tunai di tempat, dan juga transfer via QRIS (OVO, Gopay, Dana, ShopeePay, dll).</p>
                             </div>
                         </div>
-                        <!-- FAQ 2 -->
                         <div class="faq-item bg-lekker-bg border border-white/10 rounded-xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
                             <div class="p-4 flex justify-between items-center bg-white/5 hover:bg-white/10 transition-colors">
                                 <span class="font-bold text-sm sm:text-base text-orange-100">Bisa diantar (Delivery) ke rumah?</span>
@@ -484,7 +530,6 @@
                                 <p class="pt-2">Untuk sementara pesanan bisa diambil sendiri (Pick-up) atau jika area Bawen dekat bisa dibantu kirim dengan ojek lokal/kurir. Silakan diskusi ongkir via WA ya!</p>
                             </div>
                         </div>
-                        <!-- FAQ 3 -->
                         <div class="faq-item bg-lekker-bg border border-white/10 rounded-xl overflow-hidden cursor-pointer" onclick="this.classList.toggle('active')">
                             <div class="p-4 flex justify-between items-center bg-white/5 hover:bg-white/10 transition-colors">
                                 <span class="font-bold text-sm sm:text-base text-orange-100">Bedanya Lekker Putar sama lekker biasa?</span>
@@ -526,7 +571,7 @@
         <span class="absolute left-14 bg-white text-black text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md pointer-events-none">Tanya-tanya dulu?</span>
     </a>
 
-    <!-- Sidebar Keranjang (Mobile Optimized) -->
+    <!-- Sidebar Keranjang (Mobile Optimized & Anti-Bug) -->
     <div id="cart-sidebar" class="fixed inset-0 overflow-hidden z-[100] hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
         <div class="absolute inset-0 overflow-hidden">
             <!-- Background overlay -->
@@ -572,7 +617,13 @@
                             <!-- Form Data Pemesan -->
                             <div class="mt-2 space-y-3">
                                 <div>
-                                    <input type="text" id="cust-name" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors" placeholder="Nama Kamu (Biar akrab!)">
+                                    <input type="text" id="cust-name" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors" placeholder="Nama Kamu (Wajib)">
+                                </div>
+                                <div class="flex gap-2">
+                                    <div class="flex-1 relative">
+                                        <input type="text" id="promo-code" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none text-sm placeholder-gray-500 transition-colors font-mono uppercase" placeholder="Punya Kode Promo?">
+                                        <i class="fas fa-ticket-alt absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                                    </div>
                                 </div>
                                 <div>
                                     <textarea id="cust-note" rows="2" class="block w-full rounded-xl border border-white/10 bg-black/40 text-white shadow-inner focus:border-lekker-main focus:ring-1 focus:ring-lekker-main p-3.5 outline-none resize-none text-sm placeholder-gray-500 transition-colors" placeholder="Catatan: (Misal: Agak gosong ya, pisah plastik...)"></textarea>
@@ -595,7 +646,7 @@
     <div id="toast">Notifikasi</div>
 
     <script>
-        // Data Menu Diperbanyak (Termasuk menu kekinian)
+        // Data Menu
         const menuData = [
             { id: 1, name: 'CokMeSu', fullName: 'Coklat Meises Susu', price: 2000, desc: 'Klasik manis yang nggak pernah salah.', imgUrl: 'https://i.imgur.com/gpIcb81.png', tag: '' },
             { id: 2, name: 'PisCok', fullName: 'Pisang Coklat', price: 3000, desc: 'Pisang manis legit ketemu lumeran coklat.', imgUrl: 'https://i.imgur.com/vGPDgXE.png', tag: 'Best Seller' },
@@ -614,7 +665,6 @@
         let currentCustomCategory = null; 
         let selectedCustomToppings = [];
 
-        // Diperbanyak toppingnya buat Gen Z
         const customToppingsData = {
             manis: [
                 { id: 'c_coklat', name: 'Meises Coklat', price: 1000 },
@@ -685,6 +735,7 @@
             });
         }
 
+        // --- Core Keranjang ---
         function addToCart(id) {
             const item = menuData.find(m => m.id === id);
             if (!item) return;
@@ -699,7 +750,6 @@
             updateCartUI();
             showToast(`Yay! ${item.name} masuk keranjang.`);
             
-            // Subtle bounce animation for cart icons
             const cartBtns = document.querySelectorAll('.fa-shopping-cart');
             cartBtns.forEach(btn => {
                 const parent = btn.parentElement;
@@ -789,7 +839,7 @@
         function setCustomCategory(cat) {
             currentCustomCategory = cat;
             selectedCustomToppings = []; 
-            document.getElementById('custom-name-input').value = ''; // Reset input nama
+            document.getElementById('custom-name-input').value = ''; 
             
             document.getElementById('cat-manis-btn').className = cat === 'manis' 
                 ? 'flex-1 py-3 px-2 sm:px-4 rounded-xl font-bold transition-all bg-lekker-main text-lekker-bg shadow-[0_0_15px_rgba(251,191,36,0.3)] scale-[1.02] text-sm sm:text-base border border-lekker-main group'
@@ -884,11 +934,9 @@
                 }
             });
 
-            // Ambil nama kustom dari input (fallback ke nama default)
             let userInputName = document.getElementById('custom-name-input').value.trim();
             const finalName = userInputName !== "" ? `✨ ${userInputName}` : `Racikan: ${currentCustomCategory.charAt(0).toUpperCase() + currentCustomCategory.slice(1)}`;
 
-            // ID unik berdasarkan kombinasi dan nama, biar kalau namanya beda jadi item terpisah di cart
             const customId = 'custom_' + currentCustomCategory + '_' + selectedCustomToppings.sort().join('_') + '_' + btoa(finalName).substring(0,10);
 
             const item = {
@@ -918,33 +966,170 @@
                 setTimeout(() => parent.classList.remove('scale-125', 'text-lekker-main'), 200);
             });
             
-            // Reset state UI Racik
             setCustomCategory(null);
             document.getElementById('topping-selection-area').classList.add('hidden');
-            window.location.hash = "#menu"; // scroll up slightly
+            window.location.hash = "#menu"; 
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            if (menu.classList.contains('hidden')) {
-                menu.classList.remove('hidden');
-                setTimeout(() => {
-                    menu.style.transform = 'scaleY(1)';
-                    menu.style.opacity = '1';
-                }, 10);
-            } else {
-                menu.style.transform = 'scaleY(0)';
-                menu.style.opacity = '0';
-                setTimeout(() => menu.classList.add('hidden'), 300);
+        // --- MINI GAME LOGIC ---
+        let gameActive = false;
+        let gameScore = 0;
+        let gameTimeLeft = 10;
+        let gameInterval = null;
+
+        function tapLekker(el) {
+            // Visual feedback for tapping
+            el.classList.add('game-btn-active');
+            setTimeout(() => el.classList.remove('game-btn-active'), 50);
+
+            if(!gameActive) {
+                // If game hasn't started and time is full, start it.
+                if(gameTimeLeft === 10) startGame();
+                return;
+            }
+
+            gameScore++;
+            document.getElementById('game-score').textContent = gameScore;
+
+            // Spawn floating text +1
+            const plusOne = document.createElement('span');
+            plusOne.textContent = '+1';
+            plusOne.className = 'absolute text-lekker-main font-bold text-2xl font-brand drop-shadow-md pointer-events-none transition-all duration-500 opacity-100';
+            
+            // Randomize position near center
+            const offsetX = (Math.random() - 0.5) * 80;
+            const offsetY = (Math.random() - 0.5) * 80;
+            plusOne.style.left = `calc(50% + ${offsetX}px)`;
+            plusOne.style.top = `calc(50% + ${offsetY}px)`;
+            
+            el.appendChild(plusOne);
+
+            // Animate float up and fade
+            setTimeout(() => {
+                plusOne.style.transform = 'translateY(-50px) scale(1.5)';
+                plusOne.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                plusOne.remove();
+            }, 500);
+
+            // Win condition check
+            if(gameScore >= 50) {
+                endGame(true);
             }
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        function startGame() {
+            gameActive = true;
+            gameScore = 0;
+            gameTimeLeft = 10;
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-time').textContent = gameTimeLeft;
+            document.getElementById('start-game-overlay').classList.add('opacity-0');
+            document.getElementById('game-result').classList.add('hidden');
+            document.getElementById('promo-code-box').classList.add('hidden');
+
+            // Timer
+            gameInterval = setInterval(() => {
+                gameTimeLeft--;
+                document.getElementById('game-time').textContent = gameTimeLeft;
+                if(gameTimeLeft <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function endGame(isWin) {
+            gameActive = false;
+            clearInterval(gameInterval);
+            document.getElementById('start-game-overlay').classList.remove('opacity-0');
+            document.getElementById('start-game-overlay').innerHTML = '<span class="text-white font-bold text-lg drop-shadow-md">WAKTU HABIS!</span>';
+            
+            const resultBox = document.getElementById('game-result');
+            const resultTitle = document.getElementById('game-result-title');
+            const resultDesc = document.getElementById('game-result-desc');
+            const promoBox = document.getElementById('promo-code-box');
+
+            resultBox.classList.remove('hidden');
+            resultBox.classList.remove('border-red-500', 'bg-red-500/10');
+            resultBox.classList.remove('border-green-500', 'bg-green-500/10');
+
+            if(isWin) {
+                resultBox.classList.add('border-green-500', 'bg-green-500/10');
+                resultTitle.innerHTML = '🎉 GOKIL! Jari Kamu Kilat Banget!';
+                resultTitle.classList.add('text-green-400');
+                resultDesc.innerHTML = 'Selamat! Kamu berhasil tap 50x. Ini rahasia kode promo buat kamu, jangan lupa dipakai pas checkout ya!';
+                promoBox.classList.remove('hidden');
+                
+                // Set the code input automatically if user wants to play along
+                document.getElementById('promo-code').value = "LEKKERGEBOY";
+                showToast("Kode Promo otomatis ditambahkan di Keranjang!");
+                
+                // Simple Confetti effect simulation via css shapes (pseudo)
+                createConfetti();
+            } else {
+                resultBox.classList.add('border-red-500', 'bg-red-500/10');
+                resultTitle.innerHTML = '😥 Yah, Tangannya Kurang Cepet!';
+                resultTitle.classList.add('text-red-400');
+                resultTitle.classList.remove('text-green-400');
+                resultDesc.innerHTML = `Skor kamu cuma ${gameScore}/50. Yuk senam jari dulu dan coba lagi!`;
+                promoBox.classList.add('hidden');
+            }
+        }
+
+        function resetGame() {
+            gameScore = 0;
+            gameTimeLeft = 10;
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-time').textContent = gameTimeLeft;
+            document.getElementById('game-result').classList.add('hidden');
+            document.getElementById('start-game-overlay').innerHTML = '<span class="text-white font-bold text-lg drop-shadow-md">TAP UNTUK MULAI!</span>';
+            document.getElementById('start-game-overlay').classList.remove('opacity-0');
+            document.getElementById('confetti-container').classList.add('hidden');
+            document.getElementById('confetti-container').innerHTML = '';
+        }
+
+        function createConfetti() {
+            const container = document.getElementById('confetti-container');
+            container.classList.remove('hidden');
+            const colors = ['#FBBF24', '#25D366', '#3b82f6', '#ef4444', '#f472b6'];
+            
+            for(let i = 0; i < 50; i++) {
+                const conf = document.createElement('div');
+                conf.style.position = 'absolute';
+                conf.style.width = '10px';
+                conf.style.height = '10px';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + '%';
+                conf.style.top = '-10%';
+                conf.style.opacity = Math.random();
+                conf.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                const animDuration = Math.random() * 3 + 2;
+                conf.style.transition = `all ${animDuration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                container.appendChild(conf);
+
+                setTimeout(() => {
+                    conf.style.top = '110%';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+
+
+        // --- UI & Toggles Anti-Bug ---
+        function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
-            menu.style.transform = 'scaleY(0)';
-            menu.style.opacity = '0';
-            menu.style.transformOrigin = 'top';
-        });
+            if (menu.classList.contains('opacity-0')) {
+                // Open
+                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-full');
+            } else {
+                // Close
+                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-full');
+            }
+        }
 
         function toggleCart() {
             const sidebar = document.getElementById('cart-sidebar');
@@ -953,7 +1138,7 @@
 
             if (sidebar.classList.contains('hidden')) {
                 sidebar.classList.remove('hidden');
-                void sidebar.offsetWidth;
+                void sidebar.offsetWidth; // force reflow
                 overlay.classList.remove('opacity-0');
                 overlay.classList.add('opacity-100');
                 panel.classList.remove('translate-x-full');
@@ -971,15 +1156,6 @@
             }
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.innerHTML = `<i class="fas fa-check-circle mr-2 text-[#25D366]"></i> ${message}`;
-            toast.className = 'show';
-            setTimeout(() => {
-                toast.className = toast.className.replace('show', '');
-            }, 3000);
-        }
-
         function checkoutWhatsApp() {
             if (cart.length === 0) {
                 showToast("Keranjang masih sepi, jajan dulu yuk!");
@@ -987,6 +1163,7 @@
             }
 
             const custName = document.getElementById('cust-name').value.trim();
+            const promoCode = document.getElementById('promo-code').value.trim().toUpperCase();
             const custNote = document.getElementById('cust-note').value.trim();
 
             if(!custName) {
@@ -1008,7 +1185,9 @@
             message += `=====================\n`;
             message += `🔥 *TOTAL: ${formatRupiah(total)}*\n`;
             message += `=====================\n`;
-            if(custNote) message += `\n📝 *Catatan:* ${custNote}\n`;
+            
+            if(promoCode) message += `🎟️ *KODE PROMO:* ${promoCode}\n`;
+            if(custNote) message += `📝 *Catatan:* ${custNote}\n`;
             
             message += `\nTolong siapin yaa, makasih banyak! 🙏`;
 
@@ -1018,6 +1197,7 @@
             window.open(whatsappUrl, '_blank');
         }
 
+        // --- Intersection Observer untuk Animasi ---
         const observerOptions = {
             root: null,
             rootMargin: '0px',
